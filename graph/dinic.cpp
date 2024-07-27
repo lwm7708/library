@@ -62,7 +62,7 @@ public:
 
     }
 
-    auto pushFlow(int src, int sink) {
+    auto push(int src, int sink) {
 
         auto tot_flow = T();
 
