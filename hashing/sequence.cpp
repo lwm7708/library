@@ -64,9 +64,9 @@ public:
 
     }
 
-    auto query(int idx_1, int idx_2) const {
+    auto query(int idx_l, int idx_r) const {
 
-        return (pfxs[idx_2] - pfxs[idx_1] * pows[idx_2 - idx_1]).val;
+        return (pfxs[idx_r] - pfxs[idx_l] * pows[idx_r - idx_l]).val;
 
     }
 

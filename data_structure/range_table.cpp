@@ -28,19 +28,19 @@ namespace RangeTable {
     }
 
     template <typename F>
-    auto forRng(int idx_1, int idx_2, F f) {
+    auto forRng(int idx_l, int idx_r, F f) {
 
-        --idx_2;
+        --idx_r;
 
-        if (idx_1 == idx_2) {
-            f(0, idx_1);
+        if (idx_l == idx_r) {
+            f(0, idx_l);
             return;
         }
 
-        const auto lvl = log2(idx_1 ^ idx_2) + 1;
+        const auto lvl = log2(idx_l ^ idx_r) + 1;
 
-        f(lvl, idx_1);
-        f(lvl, idx_2);
+        f(lvl, idx_l);
+        f(lvl, idx_r);
 
     }
 

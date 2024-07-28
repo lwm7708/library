@@ -12,19 +12,19 @@ namespace SegmentTree {
     }
 
     template <typename F>
-    auto forRng(int node_1, int node_2, F f) {
+    auto forRng(int node_l, int node_r, F f) {
 
-        while (node_1 < node_2) {
-            if (node_1 & 1) {
-                f(node_1);
-                ++node_1;
+        while (node_l < node_r) {
+            if (node_l & 1) {
+                f(node_l);
+                ++node_l;
             }
-            if (node_2 & 1) {
-                --node_2;
-                f(node_2);
+            if (node_r & 1) {
+                --node_r;
+                f(node_r);
             }
-            node_1 >>= 1;
-            node_2 >>= 1;
+            node_l >>= 1;
+            node_r >>= 1;
         }
 
     }
@@ -47,13 +47,13 @@ namespace SegmentTree {
     }
 
     template <typename F>
-    auto forRngOrd(int node_1, int node_2, bool dir, F f) {
+    auto forRngOrd(int node_l, int node_r, bool dir, F f) {
 
-        auto base = !dir ? node_1 - 1 : node_2;
-        const auto mask = (1 << log2((node_1 - 1) ^ node_2)) - 1;
+        auto base = !dir ? node_l - 1 : node_r;
+        const auto mask = (1 << log2((node_l - 1) ^ node_r)) - 1;
         const auto offset = !dir ? 1 : -1;
 
-        auto node = (!dir ? -node_1 : node_2) & mask;
+        auto node = (!dir ? -node_l : node_r) & mask;
 
         while (node) {
             const auto bit = __builtin_ctz(node);
@@ -61,8 +61,8 @@ namespace SegmentTree {
             node ^= 1 << bit;
         }
 
-        base = dir ? node_1 - 1 : node_2;
-        node = (dir ? -node_1 : node_2) & mask;
+        base = dir ? node_l - 1 : node_r;
+        node = (dir ? -node_l : node_r) & mask;
 
         while (node) {
             const auto bit = log2(node);
