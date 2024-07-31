@@ -141,14 +141,14 @@ class Segment {
 
 private:
 
-    using PointT = Point<T>;
+    using Pt = Point<T>;
 
 public:
 
     static auto intersects(const Segment& s_1, const Segment& s_2) {
 
-        const auto sign = [](PointT v_1, PointT v_2) {
-            const auto prod = PointT::cross(v_1, v_2);
+        const auto sign = [](Pt v_1, Pt v_2) {
+            const auto prod = Pt::cross(v_1, v_2);
             if (prod == 0) {
                 return 0;
             }
@@ -180,21 +180,20 @@ public:
 
     }
 
-    PointT a = PointT();
-    PointT b = PointT();
+    Pt a = Pt();
+    Pt b = Pt();
 
     explicit Segment() = default;
 
-    explicit Segment(PointT a, PointT b) : a(a), b(b) {}
+    explicit Segment(Pt a, Pt b) : a(a), b(b) {}
 
-    auto contains(PointT p) const {
+    auto contains(Pt p) const {
 
         const auto [mn_x, mx_x] = std::minmax(a.x, b.x);
         const auto [mn_y, mx_y] = std::minmax(a.y, b.y);
 
         return (
-            PointT::cross(b - a, p - a) == 0 && p.x >= mn_x && p.x <= mx_x && p.y >= mn_y &&
-            p.y <= mx_y
+            Pt::cross(b - a, p - a) == 0 && p.x >= mn_x && p.x <= mx_x && p.y >= mn_y && p.y <= mx_y
         );
 
     }
@@ -218,10 +217,10 @@ class Polygon {
 
 private:
 
-    using PtT = Point<T>;
-    using SegT = Segment<T>;
+    using Pt = Point<T>;
+    using Seg = Segment<T>;
 
-    std::vector<PtT> vtxs = std::vector<PtT>();
+    std::vector<Pt> vtxs = std::vector<Pt>();
 
 public:
 
@@ -264,7 +263,7 @@ public:
         auto area = T();
 
         for (auto i = 0; i < sz; ++i) {
-            area += PtT::cross(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]);
+            area += Pt::cross(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]);
         }
 
         area = std::abs(area);
@@ -285,19 +284,19 @@ public:
 
     }
 
-    auto contains(PtT p) const {
+    auto contains(Pt p) const {
 
         auto in = 0;
 
         for (auto i = 0; i < sz; ++i) {
             const auto a = vtxs[i];
             const auto b = vtxs[i < sz - 1 ? i + 1 : 0];
-            if (SegT(a, b).contains(p)) {
+            if (Seg(a, b).contains(p)) {
                 return 2;
             }
             in ^= (
-                (a.x < p.x && p.x <= b.x && PtT::cross(a - b, p - b) > 0) ||
-                (b.x < p.x && p.x <= a.x && PtT::cross(b - a, p - a) > 0)
+                (a.x < p.x && p.x <= b.x && Pt::cross(a - b, p - b) > 0) ||
+                (b.x < p.x && p.x <= a.x && Pt::cross(b - a, p - a) > 0)
             );
         }
 
@@ -322,7 +321,7 @@ public:
         auto perim = 0.0;
 
         for (auto i = 0; i < sz; ++i) {
-            perim += SegT(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]).length();
+            perim += Seg(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]).length();
         }
 
         return perim;

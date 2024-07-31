@@ -140,14 +140,14 @@ class Segment {
 
 private:
 
-    using PointT = Point<T>;
+    using Pt = Point<T>;
 
 public:
 
     static auto intersects(const Segment& s_1, const Segment& s_2) {
 
-        const auto sign = [](PointT v_1, PointT v_2) {
-            const auto prod = PointT::cross(v_1, v_2);
+        const auto sign = [](Pt v_1, Pt v_2) {
+            const auto prod = Pt::cross(v_1, v_2);
             if (prod == 0) {
                 return 0;
             }
@@ -179,21 +179,20 @@ public:
 
     }
 
-    PointT a = PointT();
-    PointT b = PointT();
+    Pt a = Pt();
+    Pt b = Pt();
 
     explicit Segment() = default;
 
-    explicit Segment(PointT a, PointT b) : a(a), b(b) {}
+    explicit Segment(Pt a, Pt b) : a(a), b(b) {}
 
-    auto contains(PointT p) const {
+    auto contains(Pt p) const {
 
         const auto [mn_x, mx_x] = std::minmax(a.x, b.x);
         const auto [mn_y, mx_y] = std::minmax(a.y, b.y);
 
         return (
-            PointT::cross(b - a, p - a) == 0 && p.x >= mn_x && p.x <= mx_x && p.y >= mn_y &&
-            p.y <= mx_y
+            Pt::cross(b - a, p - a) == 0 && p.x >= mn_x && p.x <= mx_x && p.y >= mn_y && p.y <= mx_y
         );
 
     }
