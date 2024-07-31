@@ -17,10 +17,10 @@ namespace RangeTable {
             const auto lvl_sz = 1 << (i - 1);
             for (auto j = 0; j < sz >> i; ++j) {
                 for (auto k = 1; k <= lvl_sz; ++k) {
-                    f(i, lvl_sz * (j << 1 | 1) - k, k == 1);
+                    f(i, lvl_sz * (j * 2 + 1) - k, k == 1);
                 }
                 for (auto k = 0; k < lvl_sz; ++k) {
-                    f(i, lvl_sz * (j << 1 | 1) + k, k == 0);
+                    f(i, lvl_sz * (j * 2 + 1) + k, k == 0);
                 }
             }
         }
