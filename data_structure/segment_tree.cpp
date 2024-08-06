@@ -4,7 +4,7 @@ namespace SegmentTree {
     auto forLvls(int node, int sz, bool dir, P p) {
 
         while (node < sz) {
-            node = node << 1 | dir + (!dir ? p(node) : -p(node));
+            node = (node << 1 | dir) + (!dir ? p(node) : -p(node));
         }
 
         return node;
