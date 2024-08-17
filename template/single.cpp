@@ -1,11 +1,9 @@
 #include <ios>
 #include <iostream>
 
-auto solve() {
+void solve() {}
 
-}
-
-auto main() -> int {
+int main() {
 
     std::cin.tie(nullptr);
 

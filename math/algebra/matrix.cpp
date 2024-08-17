@@ -1,19 +1,25 @@
+#pragma once
+
+#include <cstdint>
+#include <utility>
 #include <vector>
 
 template <typename T>
-class Matrix {
+class matrix {
 
 private:
 
-    std::vector<std::vector<T>> data = std::vector<std::vector<T>>();
+    std::int32_t m;
+    std::int32_t n;
+    std::vector<std::vector<T>> data;
 
 public:
 
-    static auto getId(int sz) {
+    static matrix get_id(std::int32_t sz) {
 
-        auto res = Matrix(sz, sz);
+        matrix res(sz, sz);
 
-        for (auto i = 0; i < sz; ++i) {
+        for (std::int32_t i = 0; i < sz; ++i) {
             res[i][i] = T(1);
         }
 
@@ -21,78 +27,61 @@ public:
 
     }
 
-    int m = 0;
-    int n = 0;
+    explicit matrix(std::int32_t m, std::int32_t n) : m(m), n(n), data(m, std::vector<T>(n)) {}
 
-    explicit Matrix(int m, int n, T value = T()) : m(m), n(n) {
-
-        data.resize(m, std::vector<T>(n, value));
-
-    }
-
-    auto& operator[](int row) {
+    std::vector<T>& operator[](std::int32_t row) {
 
         return data[row];
 
     }
 
-    const auto& operator[](int row) const {
+    const std::vector<T>& operator[](std::int32_t row) const {
 
         return data[row];
 
     }
 
-    auto operator+=(const Matrix& other) {
+    void operator+=(const matrix& other) {
 
-        for (auto i = 0; i < m; ++i) {
-            for (auto j = 0; j < n; ++j) {
+        for (std::int32_t i = 0; i < m; ++i) {
+            for (std::int32_t j = 0; j < n; ++j) {
                 data[i][j] += other[i][j];
             }
         }
 
     }
 
-    auto operator-=(const Matrix& other) {
+    void operator-=(const matrix& other) {
 
-        for (auto i = 0; i < m; ++i) {
-            for (auto j = 0; j < n; ++j) {
+        for (std::int32_t i = 0; i < m; ++i) {
+            for (std::int32_t j = 0; j < n; ++j) {
                 data[i][j] -= other[i][j];
             }
         }
 
     }
 
-    auto operator*=(const Matrix& other) {
+    void operator*=(const matrix& other) {
 
-        auto res = Matrix(m, other.n);
+        matrix res(m, other.n);
 
-        for (auto i = 0; i < m; ++i) {
-            for (auto j = 0; j < other.n; ++j) {
-                for (auto k = 0; k < n; ++k) {
+        for (std::int32_t i = 0; i < m; ++i) {
+            for (std::int32_t j = 0; j < other.n; ++j) {
+                for (std::int32_t k = 0; k < n; ++k) {
                     res[i][j] += data[i][k] * other[k][j];
                 }
             }
         }
 
-        *this = res;
+        *this = std::move(res);
 
     }
 
-    auto operator*=(T coef) {
+    void operator*=(T coef) {
 
         for (auto& x : data) {
             for (auto& y : x) {
                 y *= coef;
-            }
-        }
-
-    }
-
-    auto operator/=(T div) {
-
-        for (auto& x : data) {
-            for (auto& y : x) {
-                y /= div;
             }
         }
 
@@ -122,7 +111,19 @@ public:
 
     }
 
-    friend auto operator+(Matrix lhs, const Matrix& rhs) {
+    friend bool operator==(const matrix& lhs, const matrix& rhs) {
+
+        return lhs.data == rhs.data;
+
+    }
+
+    friend bool operator!=(const matrix& lhs, const matrix& rhs) {
+
+        return !(lhs == rhs);
+
+    }
+
+    friend matrix operator+(matrix lhs, const matrix& rhs) {
 
         lhs += rhs;
 
@@ -130,7 +131,7 @@ public:
 
     }
 
-    friend auto operator-(Matrix lhs, const Matrix& rhs) {
+    friend matrix operator-(matrix lhs, const matrix& rhs) {
 
         lhs -= rhs;
 
@@ -138,7 +139,7 @@ public:
 
     }
 
-    friend auto operator*(Matrix lhs, const Matrix& rhs) {
+    friend matrix operator*(matrix lhs, const matrix& rhs) {
 
         lhs *= rhs;
 
@@ -146,7 +147,7 @@ public:
 
     }
 
-    friend auto operator*(Matrix lhs, T rhs) {
+    friend matrix operator*(matrix lhs, T rhs) {
 
         lhs *= rhs;
 
@@ -154,15 +155,7 @@ public:
 
     }
 
-    friend auto operator/(Matrix lhs, T rhs) {
-
-        lhs /= rhs;
-
-        return lhs;
-
-    }
-
-    friend auto operator*(T lhs, const Matrix& rhs) {
+    friend matrix operator*(T lhs, const matrix& rhs) {
 
         return rhs * lhs;
 

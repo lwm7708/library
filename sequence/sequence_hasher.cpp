@@ -1,22 +1,25 @@
+#pragma once
+
 #include <chrono>
+#include <cstdint>
 #include <vector>
 
 template <typename T>
-class SequenceHasher {
+class sequence_hasher {
 
 private:
 
-    static inline auto base = T(std::chrono::steady_clock::now().time_since_epoch().count());
-    static inline auto pows = std::vector<T>({T(1)});
+    static inline const T base = T(std::chrono::steady_clock::now().time_since_epoch().count());
+    static inline std::vector pows = std::vector<T>({T(1)});
 
-    std::vector<T> pfxs = std::vector<T>(1);
+    std::vector<T> pfxs;
 
 public:
 
     template <typename It>
-    static auto hash(It it_l, It it_r) {
+    static std::int32_t hash(It it_l, It it_r) {
 
-        auto res = T();
+        T res;
 
         while (it_l != it_r) {
             res = res * base + T(*it_l);
@@ -27,12 +30,12 @@ public:
 
     }
 
-    explicit SequenceHasher() = default;
+    explicit sequence_hasher() : pfxs(1) {}
 
     template <typename It>
-    explicit SequenceHasher(It it_l, It it_r) {
+    explicit sequence_hasher(It it_l, It it_r) : sequence_hasher() {
 
-        const auto len = it_r - it_l;
+        const std::int32_t len = it_r - it_l;
 
         while (it_l != it_r) {
             pfxs.push_back(pfxs.back() * base + T(*it_l));
@@ -41,20 +44,20 @@ public:
 
         pows.reserve(len + 1);
 
-        while (static_cast<int>(std::size(pows)) <= len) {
+        while (std::int32_t(std::size(pows)) <= len) {
             pows.push_back(pows.back() * base);
         }
 
     }
 
-    auto pop() {
+    void pop() {
 
         pfxs.pop_back();
 
     }
 
     template <typename U>
-    auto push(U val) {
+    void push(U val) {
 
         pfxs.push_back(pfxs.back() * base + T(val));
 
@@ -64,9 +67,9 @@ public:
 
     }
 
-    auto query(int idx_l, int idx_r) const {
+    std::int32_t query(std::int32_t idx_l, std::int32_t idx_r) const {
 
-        return (pfxs[idx_r] - pfxs[idx_l] * pows[idx_r - idx_l]).val;
+        return (pfxs[idx_r] - pfxs[idx_l] * (pows[idx_r - idx_l])).val;
 
     }
 

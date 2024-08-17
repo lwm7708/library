@@ -1,109 +1,95 @@
-#include <array>
-#include <utility>
+#pragma once
 
-template <typename T>
-auto extendedGCD(T m, T n) {
+#include <cstdint>
 
-    auto a = T(1);
-    auto a_in = T();
-    auto b = T();
-    auto b_in = T(1);
+#include "math/number_theory/extended_gcd.cpp"
 
-    while (n) {
-        const auto q = m / n;
-        a_in = std::exchange(a, a_in) - q * a_in;
-        b_in = std::exchange(b, b_in) - q * b_in;
-        n = std::exchange(m, n) - q * n;
-    }
-
-    return std::array<T, 3>({m, a, b});
-
-}
-
-template <int>
-class DynamicModularInteger {
+template <std::int32_t>
+class dynamic_modular_integer {
 
 private:
 
-    static inline auto modulus = 0;
+    static inline std::int32_t modulus;
 
 public:
 
-    static auto getModulus() {
+    static std::int32_t get_modulus() {
 
         return modulus;
 
     }
 
-    static auto setModulus(int mod) {
+    static void set_modulus(std::int32_t mod) {
 
         modulus = mod;
 
     }
 
-    int val = 0;
+    std::int32_t val;
 
-    explicit DynamicModularInteger() = default;
+    explicit dynamic_modular_integer() : dynamic_modular_integer(0) {}
 
-    explicit DynamicModularInteger(long long val) : val(val % modulus) {
+    explicit dynamic_modular_integer(std::int64_t val) : val(val % get_modulus()) {
 
         if (this->val < 0) {
-            this->val += modulus;
+            this->val += get_modulus();
         }
 
     }
 
-    auto operator-() const {
+    dynamic_modular_integer operator-() const {
 
-        return DynamicModularInteger(-val);
-
-    }
-
-    auto operator++() {
-
-        val = val < modulus - 1 ? val + 1 : 0;
+        return dynamic_modular_integer(-val);
 
     }
 
-    auto operator--() {
+    void operator++() {
 
-        val = val ? val - 1 : modulus - 1;
+        *this += dynamic_modular_integer(1);
 
     }
 
-    auto operator+=(DynamicModularInteger other) {
+    void operator--() {
 
-        if (other.val >= modulus - val) {
-            val -= modulus;
+        *this -= dynamic_modular_integer(1);
+
+    }
+
+    void operator+=(dynamic_modular_integer other) {
+
+        if (other.val >= get_modulus() - val) {
+            val -= get_modulus();
         }
 
         val += other.val;
 
     }
 
-    auto operator-=(DynamicModularInteger other) {
+    void operator-=(dynamic_modular_integer other) {
 
         val -= other.val;
 
         if (val < 0) {
-            val += modulus;
+            val += get_modulus();
         }
 
     }
 
-    auto operator*=(DynamicModularInteger other) {
+    void operator*=(dynamic_modular_integer other) {
 
-        val = static_cast<long long>(val) * other.val % modulus;
-
-    }
-
-    auto operator/=(DynamicModularInteger other) {
-
-        *this *= DynamicModularInteger(extendedGCD(other.val, modulus)[1]);
+        val = (std::int64_t(val) * other.val) % get_modulus();
 
     }
 
-    friend auto operator+(DynamicModularInteger lhs, DynamicModularInteger rhs) {
+    void operator/=(dynamic_modular_integer other) {
+
+        *this *= dynamic_modular_integer(extended_gcd(other.val, get_modulus())[1]);
+
+    }
+
+    friend dynamic_modular_integer operator+(
+        dynamic_modular_integer lhs, dynamic_modular_integer rhs
+    ) {
 
         lhs += rhs;
 
@@ -111,7 +97,9 @@ public:
 
     }
 
-    friend auto operator-(DynamicModularInteger lhs, DynamicModularInteger rhs) {
+    friend dynamic_modular_integer operator-(
+        dynamic_modular_integer lhs, dynamic_modular_integer rhs
+    ) {
 
         lhs -= rhs;
 
@@ -119,7 +107,9 @@ public:
 
     }
 
-    friend auto operator*(DynamicModularInteger lhs, DynamicModularInteger rhs) {
+    friend dynamic_modular_integer operator*(
+        dynamic_modular_integer lhs, dynamic_modular_integer rhs
+    ) {
 
         lhs *= rhs;
 
@@ -127,7 +117,9 @@ public:
 
     }
 
-    friend auto operator/(DynamicModularInteger lhs, DynamicModularInteger rhs) {
+    friend dynamic_modular_integer operator/(
+        dynamic_modular_integer lhs, dynamic_modular_integer rhs
+    ) {
 
         lhs /= rhs;
 

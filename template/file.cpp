@@ -1,13 +1,11 @@
 #include <fstream>
 
-auto fin = std::ifstream(".in");
-auto fout = std::ofstream(".out");
+std::ifstream fin("");
+std::ofstream fout("");
 
-auto solve() {
+void solve() {}
 
-}
-
-auto main() -> int {
+int main() {
 
     solve();
 

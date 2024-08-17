@@ -1,12 +1,16 @@
-namespace FenwickTree {
+#pragma once
+
+#include <cstdint>
+
+namespace fenwick_tree {
 
     template <typename P>
-    auto forLvls(int sz, P p) {
+    std::int32_t for_lvls(std::int32_t sz, P p) {
 
-        auto idx = 0;
+        std::int32_t idx = 0;
 
-        for (auto i = 31 - __builtin_clz(sz); i >= 0; --i) {
-            const auto n_idx = idx | 1 << i;
+        for (std::int32_t i = 31 - __builtin_clz(sz); i >= 0; --i) {
+            const std::int32_t n_idx = idx | 1 << i;
             if (n_idx <= sz && p(n_idx)) {
                 idx = n_idx;
             }
@@ -17,7 +21,7 @@ namespace FenwickTree {
     }
 
     template <typename F>
-    auto forPars(int node, int sz, F f) {
+    void for_pars(std::int32_t node, std::int32_t sz, F f) {
 
         ++node;
 
@@ -29,7 +33,7 @@ namespace FenwickTree {
     }
 
     template <typename F>
-    auto forRng(int node, F f) {
+    void for_rng(std::int32_t node, F f) {
 
         while (node) {
             f(node);

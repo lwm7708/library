@@ -2,13 +2,11 @@
 #include <ios>
 #include <iostream>
 
-auto fin = std::ifstream("input.txt");
+std::ifstream fin("input.txt");
 
-auto check() {
+void check() {}
 
-}
-
-auto main() -> int {
+int main() {
 
     std::cin.tie(nullptr);
 

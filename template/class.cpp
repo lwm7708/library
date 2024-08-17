@@ -2,6 +2,4 @@ class Solution {
 
 public:
 
-
-
 };

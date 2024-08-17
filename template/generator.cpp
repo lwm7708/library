@@ -3,15 +3,13 @@
 
 #include "generate.cpp"
 
-auto generate() {
+void gen() {}
 
-}
-
-auto main() -> int {
+int main() {
 
     std::ios_base::sync_with_stdio(false);
 
-    generate();
+    gen();
 
     return 0;
 

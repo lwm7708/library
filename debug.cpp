@@ -1,5 +1,3 @@
-#pragma once
-
 #include <array>
 #include <bitset>
 #include <cstddef>
@@ -22,282 +20,130 @@
 #include <utility>
 #include <vector>
 
-namespace Debug {
+namespace debug {
 
-    namespace Traits {
+    namespace traits {
 
-        template <typename>
-        auto testFormat(unsigned) -> std::false_type;
-
-        template <typename T>
-        auto testFormat(int) -> decltype(void(std::declval<T>()._format()), std::true_type());
+        template <typename, typename = void>
+        class has_fmt : public std::false_type {};
 
         template <typename T>
-        class HasFormat : public decltype(testFormat<T>(0)) {};
+        class has_fmt<
+            T, std::void_t<decltype(std::declval<T>()._fmt())>
+        > : public std::true_type {};
 
         template <typename>
-        class IsMap : public std::false_type {};
+        class is_map : public std::false_type {};
 
         template <typename... Types>
-        class IsMap<std::map<Types...>> : public std::true_type {};
+        class is_map<std::map<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsMap<std::multimap<Types...>> : public std::true_type {};
+        class is_map<std::multimap<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsMap<std::unordered_map<Types...>> : public std::true_type {};
+        class is_map<std::unordered_map<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsMap<std::unordered_multimap<Types...>> : public std::true_type {};
+        class is_map<std::unordered_multimap<Types...>> : public std::true_type {};
 
         template <typename>
-        class IsSequence : public std::false_type {};
+        class is_seq : public std::false_type {};
 
         template <typename T, std::size_t N>
-        class IsSequence<std::array<T, N>> : public std::true_type {};
+        class is_seq<std::array<T, N>> : public std::true_type {};
 
         template <typename... Types>
-        class IsSequence<std::deque<Types...>> : public std::true_type {};
+        class is_seq<std::deque<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsSequence<std::forward_list<Types...>> : public std::true_type {};
+        class is_seq<std::forward_list<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsSequence<std::list<Types...>> : public std::true_type {};
+        class is_seq<std::list<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsSequence<std::vector<Types...>> : public std::true_type {};
+        class is_seq<std::vector<Types...>> : public std::true_type {};
 
         template <typename>
-        class IsSet : public std::false_type {};
+        class is_set : public std::false_type {};
 
         template <typename... Types>
-        class IsSet<std::multiset<Types...>> : public std::true_type {};
+        class is_set<std::multiset<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsSet<std::set<Types...>> : public std::true_type {};
+        class is_set<std::set<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsSet<std::unordered_multiset<Types...>> : public std::true_type {};
+        class is_set<std::unordered_multiset<Types...>> : public std::true_type {};
 
         template <typename... Types>
-        class IsSet<std::unordered_set<Types...>> : public std::true_type {};
+        class is_set<std::unordered_set<Types...>> : public std::true_type {};
 
         template <typename T>
-        constexpr auto has_format_v = HasFormat<T>::value;
+        constexpr bool has_fmt_v = has_fmt<T>::value;
 
         template <typename T>
-        constexpr auto is_map_v = IsMap<T>::value;
+        constexpr bool is_map_v = is_map<T>::value;
 
         template <typename T>
-        constexpr auto is_sequence_v = IsSequence<T>::value;
+        constexpr bool is_seq_v = is_seq<T>::value;
 
         template <typename T>
-        constexpr auto is_set_v = IsSet<T>::value;
+        constexpr bool is_set_v = is_set<T>::value;
 
     }
 
     template <typename T>
-    auto format(T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr);
+    std::string fmt(T, std::enable_if_t<std::is_floating_point_v<T>>* = nullptr);
 
     template <typename T>
-    auto format(T, std::enable_if_t<std::is_integral_v<T>>* = nullptr);
+    std::string fmt(T, std::enable_if_t<std::is_integral_v<T>>* = nullptr);
 
     template <typename T>
-    auto format(const T&, std::enable_if_t<Traits::is_map_v<T>>* = nullptr);
+    std::string fmt(const T&, std::enable_if_t<traits::is_map_v<T>>* = nullptr);
 
     template <typename T>
-    auto format(const T&, std::enable_if_t<Traits::is_sequence_v<T>>* = nullptr);
+    std::string fmt(const T&, std::enable_if_t<traits::is_seq_v<T>>* = nullptr);
 
     template <typename T>
-    auto format(const T&, std::enable_if_t<Traits::is_set_v<T>>* = nullptr);
+    std::string fmt(const T&, std::enable_if_t<traits::is_set_v<T>>* = nullptr);
 
     template <std::size_t N>
-    auto format(const std::bitset<N>&);
+    std::string fmt(const std::bitset<N>&);
 
     template <typename T1, typename T2>
-    auto format(const std::pair<T1, T2>&);
+    std::string fmt(const std::pair<T1, T2>&);
 
     template <typename... Types>
-    auto format(const std::priority_queue<Types...>&);
+    std::string fmt(const std::priority_queue<Types...>&);
 
     template <typename... Types>
-    auto format(const std::queue<Types...>&);
+    std::string fmt(const std::queue<Types...>&);
 
     template <typename... Types>
-    auto format(const std::stack<Types...>&);
+    std::string fmt(const std::stack<Types...>&);
 
-    auto format(bool);
+    std::string fmt(bool);
 
-    auto format(char);
+    std::string fmt(char);
 
-    auto format(const char*);
+    std::string fmt(const char*);
 
-    auto format(const std::string&);
+    std::string fmt(const std::string&);
 
     template <typename T>
-    auto format(T, std::enable_if_t<Traits::has_format_v<T>>* = nullptr);
+    std::string fmt(T, std::enable_if_t<traits::has_fmt_v<T>>* = nullptr);
 
     template <typename T, typename F>
-    auto formatAdaptor(T, F);
+    std::string fmt_adptr(T val, F f) {
 
-    template <typename It>
-    auto formatIt(It, It);
+        std::string str("[");
 
-    template <typename T>
-    auto combine(const T& value) {
-
-        return format(value);
-
-    }
-
-    template <typename T, typename... Ts>
-    auto combine(const T& value, const Ts&... rest) {
-
-        return format(value) + ", " + combine(rest...);
-
-    }
-
-    template <typename T>
-    auto format(T value, std::enable_if_t<std::is_floating_point_v<T>>*) {
-
-        auto str_stream = std::ostringstream();
-
-        str_stream << std::fixed << std::setprecision(8) << value;
-
-        return std::string(str_stream.str());
-
-    }
-
-    template <typename T>
-    auto format(T value, std::enable_if_t<std::is_integral_v<T>>*) {
-
-        return std::to_string(value);
-
-    }
-
-    template <typename T>
-    auto format(const T& value, std::enable_if_t<Traits::is_map_v<T>>*) {
-
-        auto str = std::string("{");
-
-        for (auto it = value.begin(); it != value.end(); ++it) {
-            str.append(format(it->first) + ": " + format(it->second));
-            if (std::next(it) != value.end()) {
-                str.append(", ");
-            }
-        }
-
-        str.push_back('}');
-
-        return str;
-
-    }
-
-    template <typename T>
-    auto format(const T& value, std::enable_if_t<Traits::is_sequence_v<T>>*) {
-
-        return '[' + formatIt(value.begin(), value.end()) + ']';
-
-    }
-
-    template <typename T>
-    auto format(const T& value, std::enable_if_t<Traits::is_set_v<T>>*) {
-
-        return '{' + formatIt(value.begin(), value.end()) + '}';
-
-    }
-
-    template <std::size_t N>
-    auto format(const std::bitset<N>& value) {
-
-        return value.to_string();
-
-    }
-
-    template <typename T1, typename T2>
-    auto format(const std::pair<T1, T2>& value) {
-
-        return '(' + format(value.first) + ", " + format(value.second) + ')';
-
-    }
-
-    template <typename... Types>
-    auto format(const std::priority_queue<Types...>& value) {
-
-        return formatAdaptor(
-            value,
-            [](const std::priority_queue<Types...>& container) {
-                return container.top();
-            }
-        );
-
-    }
-
-    template <typename... Types>
-    auto format(const std::queue<Types...>& value) {
-
-        return formatAdaptor(
-            value,
-            [](const std::queue<Types...>& container) {
-                return container.front();
-            }
-        );
-
-    }
-
-    template <typename... Types>
-    auto format(const std::stack<Types...>& value) {
-
-        return formatAdaptor(
-            value,
-            [](const std::stack<Types...>& container) {
-                return container.top();
-            }
-        );
-
-    }
-
-    auto format(bool value) {
-
-        return std::string(value ? "true" : "false");
-
-    }
-
-    auto format(char value) {
-
-        return std::string({value});
-
-    }
-
-    auto format(const char* value) {
-
-        return std::string(value);
-
-    }
-
-    auto format(const std::string& value) {
-
-        return value;
-
-    }
-
-    template <typename T>
-    auto format(T value, std::enable_if_t<Traits::has_format_v<T>>*) {
-
-        return value._format();
-
-    }
-
-    template <typename T, typename F>
-    auto formatAdaptor(T value, F f) {
-
-        auto str = std::string("[");
-
-        while (!value.empty()) {
-            str.append(format(f(value)));
-            value.pop();
-            if (!value.empty()) {
+        while (!std::empty(val)) {
+            str.append(fmt(f(val)));
+            val.pop();
+            if (!std::empty(val)) {
                 str.append(", ");
             }
         }
@@ -309,42 +155,187 @@ namespace Debug {
     }
 
     template <typename It>
-    auto formatIt(It first, It last) {
+    std::string fmt_it(It it_l, It it_r) {
 
-        auto str = std::string();
+        std::string str;
 
-        while (first != last) {
-            str.append(format(*first));
-            if (std::next(first) != last) {
+        while (it_l != it_r) {
+            str.append(fmt(*it_l));
+            if (std::next(it_l) != it_r) {
                 str.append(", ");
             }
-            ++first;
+            ++it_l;
         }
 
         return str;
 
     }
 
+    template <typename T>
+    std::string cmb(const T& val) {
+
+        return fmt(val);
+
+    }
+
+    template <typename T, typename... Ts>
+    std::string cmb(const T& val, const Ts&... rest) {
+
+        return fmt(val) + ", " + cmb(rest...);
+
+    }
+
+    template <typename T>
+    std::string fmt(T val, std::enable_if_t<std::is_floating_point_v<T>>*) {
+
+        std::ostringstream strm;
+
+        strm << std::fixed << std::setprecision(8) << val;
+
+        return std::string(strm.str());
+
+    }
+
+    template <typename T>
+    std::string fmt(T val, std::enable_if_t<std::is_integral_v<T>>*) {
+
+        return std::to_string(val);
+
+    }
+
+    template <typename T>
+    std::string fmt(const T& val, std::enable_if_t<traits::is_map_v<T>>*) {
+
+        std::string str("{");
+
+        for (auto it = std::begin(val); it != std::end(val); ++it) {
+            str.append(format(it->first) + ": " + format(it->second));
+            if (std::next(it) != std::end(val)) {
+                str.append(", ");
+            }
+        }
+
+        str.push_back('}');
+
+        return str;
+
+    }
+
+    template <typename T>
+    std::string fmt(const T& val, std::enable_if_t<traits::is_seq_v<T>>*) {
+
+        return '[' + fmt_it(std::begin(val), std::end(val)) + ']';
+
+    }
+
+    template <typename T>
+    std::string fmt(const T& val, std::enable_if_t<traits::is_set_v<T>>*) {
+
+        return '{' + fmt_it(std::begin(val), std::end(val)) + '}';
+
+    }
+
+    template <std::size_t N>
+    std::string fmt(const std::bitset<N>& val) {
+
+        return val.to_string();
+
+    }
+
+    template <typename T1, typename T2>
+    std::string fmt(const std::pair<T1, T2>& val) {
+
+        return '(' + cmb(val.first, val.second) + ')';
+
+    }
+
+    template <typename... Types>
+    std::string fmt(const std::priority_queue<Types...>& val) {
+
+        return fmt_adptr(
+            val,
+            [](const std::priority_queue<Types...>& cont) {
+                return cont.top();
+            }
+        );
+
+    }
+
+    template <typename... Types>
+    std::string fmt(const std::queue<Types...>& val) {
+
+        return fmt_adptr(
+            val,
+            [](const std::queue<Types...>& cont) {
+                return cont.front();
+            }
+        );
+
+    }
+
+    template <typename... Types>
+    std::string fmt(const std::stack<Types...>& val) {
+
+        return fmt_adptr(
+            val,
+            [](const std::stack<Types...>& cont) {
+                return cont.top();
+            }
+        );
+
+    }
+
+    std::string fmt(bool val) {
+
+        return std::string(!val ? "false" : "true");
+
+    }
+
+    std::string fmt(char val) {
+
+        return std::string({val});
+
+    }
+
+    std::string fmt(const char* val) {
+
+        return std::string(val);
+
+    }
+
+    std::string fmt(const std::string& val) {
+
+        return val;
+
+    }
+
+    template <typename T>
+    std::string fmt(T val, std::enable_if_t<traits::has_fmt_v<T>>*) {
+
+        return val._fmt();
+
+    }
+
 }
 
-auto debug() {
+void dbg() {
 
     std::clog << '\n' << std::flush;
 
 }
 
 template <typename T>
-auto debug(const T& value) {
+void dbg(const T& val) {
 
-    std::clog << Debug::format(value) << '\n' << std::flush;
+    std::clog << debug::fmt(val) << '\n' << std::flush;
 
 }
 
 template <typename T, typename... Ts>
-auto debug(const T& value, const Ts&... rest) {
+void dbg(const T& val, const Ts&... rest) {
 
-    std::clog << Debug::format(value) << ' ';
+    std::clog << debug::fmt(val) << ' ';
 
-    debug(rest...);
+    dbg(rest...);
 
 }

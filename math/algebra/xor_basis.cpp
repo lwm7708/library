@@ -1,29 +1,30 @@
+#pragma once
+
 #include <algorithm>
+#include <cstdint>
 #include <vector>
 
 template <typename T>
-class XorBasis {
+class xor_basis {
+
+private:
+
+    std::int32_t bits;
+    std::vector<T> vecs;
 
 public:
 
-    int bits = 0;
-    std::vector<T> vecs = std::vector<T>();
+    explicit xor_basis(std::int32_t bits) : bits(bits), vecs(bits) {}
 
-    explicit XorBasis(int bits) : bits(bits) {
-
-        vecs.resize(bits);
-
-    }
-
-    auto dim() const {
+    std::int32_t dim() const {
 
         return bits - std::count(std::begin(vecs), std::end(vecs), 0);
 
     }
 
-    auto insert(T vec) {
+    void insert(T vec) {
 
-        for (auto i = bits - 1; vec; --i) {
+        for (std::int32_t i = bits - 1; vec; --i) {
             if (vec >> i & 1) {
                 if (vecs[i] == 0) {
                     vecs[i] = vec;
@@ -34,9 +35,9 @@ public:
 
     }
 
-    auto query(T vec) const {
+    bool query(T vec) const {
 
-        for (auto i = bits - 1; i >= 0 && vec; --i) {
+        for (std::int32_t i = bits - 1; i >= 0 && vec; --i) {
             if (vec >> i & 1) {
                 vec ^= vecs[i];
             }

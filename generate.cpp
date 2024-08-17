@@ -1,28 +1,35 @@
 #include <chrono>
+#include <cstdint>
 #include <random>
 
-namespace Random {
+namespace generate {
 
-    auto rng = std::mt19937(std::chrono::steady_clock::now().time_since_epoch().count());
-    auto rng_64 = std::mt19937_64(std::chrono::steady_clock::now().time_since_epoch().count());
+    std::mt19937_64 rng(std::chrono::steady_clock::now().time_since_epoch().count());
 
-}
+    template <typename T>
+    T next_int(T a, T b) {
 
-template <typename T>
-auto nextInt(T a, T b) {
+        return std::uniform_int_distribution<T>(a, b - 1)(rng);
 
-    return std::uniform_int_distribution<T>(a, b - 1)(Random::rng_64);
+    }
 
-}
+    template <typename T>
+    T next_real(T a, T b) {
 
-auto nextBool() {
+        return std::uniform_real_distribution<T>(a, b)(rng);
 
-    return nextInt(0, 2) == 1;
+    }
 
-}
+    bool next_bool() {
 
-auto nextChar(bool upper) {
+        return next_int<std::int32_t>(0, 2) == 1;
 
-    return static_cast<char>(nextInt(0, 26) + (!upper ? 'a' : 'A'));
+    }
+
+    char next_char(bool upper) {
+
+        return next_int<std::int32_t>(0, 26) + (!upper ? 'a' : 'A');
+
+    }
 
 }

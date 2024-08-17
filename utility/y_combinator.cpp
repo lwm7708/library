@@ -1,15 +1,17 @@
+#pragma once
+
 #include <utility>
 
 template <typename F>
-class YCombinator {
+class y_combinator {
 
 private:
 
-    const F f = nullptr;
+    F f;
 
 public:
 
-    explicit YCombinator(F&& f) : f(f) {}
+    explicit y_combinator(F&& f) : f(f) {}
 
     template <typename... Args>
     decltype(auto) operator()(Args&&... args) const {
@@ -21,4 +23,4 @@ public:
 };
 
 template <typename F>
-YCombinator(F) -> YCombinator<F>;
+y_combinator(F) -> y_combinator<F>;

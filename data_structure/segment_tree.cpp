@@ -1,7 +1,13 @@
-namespace SegmentTree {
+#pragma once
+
+#include <cstdint>
+
+namespace segment_tree {
+
+    std::int32_t log_2(std::int32_t);
 
     template <typename P>
-    auto forLvls(int node, int sz, bool dir, P p) {
+    std::int32_t for_lvls(std::int32_t node, std::int32_t sz, bool dir, P p) {
 
         while (node < sz) {
             node = (node << 1 | dir) + (!dir ? p(node) : -p(node));
@@ -12,7 +18,18 @@ namespace SegmentTree {
     }
 
     template <typename F>
-    auto forRng(int node_l, int node_r, F f) {
+    void for_pars(std::int32_t node, bool dir, F f) {
+
+        const std::int32_t lvls = log_2(node);
+
+        for (std::int32_t i = 1; i <= lvls; ++i) {
+            f(node >> (!dir ? lvls - i + 1 : i));
+        }
+
+    }
+
+    template <typename F>
+    void for_rng(std::int32_t node_l, std::int32_t node_r, F f) {
 
         while (node_l < node_r) {
             if (node_l & 1) {
@@ -29,35 +46,18 @@ namespace SegmentTree {
 
     }
 
-    auto log2(int x) {
-
-        return 31 - __builtin_clz(x);
-
-    }
-
     template <typename F>
-    auto forPars(int node, bool dir, F f) {
+    void for_rng_ord(std::int32_t node_l, std::int32_t node_r, bool dir, F f) {
 
-        const auto lvls = log2(node);
+        std::int32_t base = !dir ? node_l - 1 : node_r;
+        const std::int32_t mask = (1 << log_2((node_l - 1) ^ node_r)) - 1;
+        const std::int32_t shft = !dir ? 1 : -1;
 
-        for (auto i = 1; i <= lvls; ++i) {
-            f(node >> (!dir ? lvls - i + 1 : i));
-        }
-
-    }
-
-    template <typename F>
-    auto forRngOrd(int node_l, int node_r, bool dir, F f) {
-
-        auto base = !dir ? node_l - 1 : node_r;
-        const auto mask = (1 << log2((node_l - 1) ^ node_r)) - 1;
-        const auto offset = !dir ? 1 : -1;
-
-        auto node = (!dir ? -node_l : node_r) & mask;
+        std::int32_t node = (!dir ? -node_l : node_r) & mask;
 
         while (node) {
-            const auto bit = __builtin_ctz(node);
-            f((base >> bit) + offset);
+            const std::int32_t bit = __builtin_ctz(node);
+            f((base >> bit) + shft);
             node ^= 1 << bit;
         }
 
@@ -65,10 +65,16 @@ namespace SegmentTree {
         node = (dir ? -node_l : node_r) & mask;
 
         while (node) {
-            const auto bit = log2(node);
-            f((base >> bit) - offset);
+            const std::int32_t bit = log_2(node);
+            f((base >> bit) - shft);
             node ^= 1 << bit;
         }
+
+    }
+
+    std::int32_t log_2(std::int32_t x) {
+
+        return 31 - __builtin_clz(x);
 
     }
 

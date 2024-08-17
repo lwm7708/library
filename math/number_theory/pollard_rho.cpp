@@ -1,31 +1,36 @@
+#pragma once
+
+#include <cstdint>
 #include <cstdlib>
 #include <numeric>
 
-auto pollardRho(long long n) {
+std::int64_t pollard_rho(std::int64_t n) {
+
+    using int128_t = __int128_t;
 
     if (n % 2 == 0) {
-        return 2ll;
+        return 2;
     }
 
-    auto c = 1ll;
-    auto gcd = 1ll;
+    std::int64_t c = 1;
+    std::int64_t dvsr = 1;
 
-    const auto f = [&](long long x) {
-        return static_cast<long long>((__int128_t(x) * x + c) % n);
+    const auto f = [&](std::int64_t x) -> std::int64_t {
+        return (int128_t(x) * x + c) % n;
     };
 
-    while (gcd == 1 || gcd == n) {
-        gcd = 1;
-        auto ptr_f = f(c);
-        auto ptr_s = c;
-        while (gcd == 1) {
-            gcd = std::gcd(std::abs(ptr_f - ptr_s), n);
-            ptr_s = f(ptr_s);
-            ptr_f = f(f(ptr_f));
+    while (dvsr == 1 || dvsr == n) {
+        dvsr = 1;
+        std::int64_t ptr_1 = c;
+        std::int64_t ptr_2 = f(c);
+        while (dvsr == 1) {
+            dvsr = std::gcd(ptr_2 - ptr_1, n);
+            ptr_1 = f(ptr_1);
+            ptr_2 = f(f(ptr_2));
         }
         ++c;
     }
 
-    return gcd;
+    return dvsr;
 
 }

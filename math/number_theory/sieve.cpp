@@ -1,21 +1,24 @@
+#pragma once
+
+#include <cstdint>
 #include <vector>
 
-namespace Sieve {
+namespace sieve {
 
-    auto facts = std::vector<int>();
-    auto primes = std::vector<int>();
+    std::vector<std::int32_t> facts;
+    std::vector<std::int32_t> primes;
 
-    auto reserve(int size) {
+    void reserve(std::int32_t sz) {
 
-        facts.resize(size + 1);
+        facts.assign(sz + 1, 0);
 
-        for (auto i = 2; i <= size; ++i) {
+        for (std::int32_t i = 2; i <= sz; ++i) {
             if (facts[i] == 0) {
                 facts[i] = i;
                 primes.push_back(i);
             }
             for (auto x : primes) {
-                if (i * x > size) {
+                if (i * x > sz) {
                     break;
                 }
                 facts[i * x] = x;

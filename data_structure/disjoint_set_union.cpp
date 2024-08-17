@@ -1,55 +1,50 @@
+#pragma once
+
+#include <cstdint>
 #include <numeric>
 #include <utility>
 #include <vector>
 
-class DisjointSetUnion {
+class disjoint_set_union {
 
 private:
 
-    std::vector<int> reps = std::vector<int>();
-    std::vector<int> szs = std::vector<int>();
+    std::vector<std::int32_t> reps;
+    std::vector<std::int32_t> szs;
 
 public:
 
-    explicit DisjointSetUnion(int sz) {
-
-        reps.resize(sz);
+    explicit disjoint_set_union(std::int32_t sz) : reps(sz), szs(sz, 1) {
 
         std::iota(std::begin(reps), std::end(reps), 0);
 
-        szs.assign(sz, 1);
-
     }
 
-    auto find(int node) {
+    std::int32_t find(std::int32_t node) {
 
-        auto ptr = node;
+        std::int32_t ptr = node;
 
         while (reps[ptr] != ptr) {
             ptr = reps[ptr];
         }
 
-        const auto rep = ptr;
-
-        ptr = node;
+        const std::int32_t rep = std::exchange(ptr, node);
 
         while (ptr != rep) {
-            const auto next = reps[ptr];
-            reps[ptr] = rep;
-            ptr = next;
+            ptr = std::exchange(reps[ptr], rep);
         }
 
         return rep;
 
     }
 
-    auto getSz(int node) {
+    std::int32_t get_sz(std::int32_t node) {
 
         return szs[find(node)];
 
     }
 
-    auto merge(int node_1, int node_2) {
+    void merge(std::int32_t node_1, std::int32_t node_2) {
 
         node_1 = find(node_1);
         node_2 = find(node_2);

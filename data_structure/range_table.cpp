@@ -1,26 +1,26 @@
-namespace RangeTable {
+#pragma once
 
-    auto log2(int x) {
+#include <cstdint>
 
-        return 31 - __builtin_clz(x);
+namespace range_table {
 
-    }
+    std::int32_t log_2(std::int32_t);
 
     template <typename F>
-    auto forAll(int sz, F f) {
+    void for_all(std::int32_t sz, F f) {
 
-        for (auto i = 0; i < sz; ++i) {
+        for (std::int32_t i = 0; i < sz; ++i) {
             f(0, i, true);
         }
 
-        for (auto i = 1; i <= log2(sz); ++i) {
-            const auto lvl_sz = 1 << (i - 1);
-            for (auto j = 0; j < sz >> i; ++j) {
-                for (auto k = 1; k <= lvl_sz; ++k) {
-                    f(i, lvl_sz * (j * 2 + 1) - k, k == 1);
+        for (std::int32_t i = 1; i <= log_2(sz); ++i) {
+            const std::int32_t c_sz = 1 << (i - 1);
+            for (std::int32_t j = 0; j < sz >> i; ++j) {
+                for (std::int32_t k = 1; k <= c_sz; ++k) {
+                    f(i, c_sz * (j * 2 + 1) - k, k == 1);
                 }
-                for (auto k = 0; k < lvl_sz; ++k) {
-                    f(i, lvl_sz * (j * 2 + 1) + k, k == 0);
+                for (std::int32_t k = 0; k < c_sz; ++k) {
+                    f(i, c_sz * (j * 2 + 1) + k, k == 0);
                 }
             }
         }
@@ -28,7 +28,7 @@ namespace RangeTable {
     }
 
     template <typename F>
-    auto forRng(int idx_l, int idx_r, F f) {
+    void for_rng(std::int32_t idx_l, std::int32_t idx_r, F f) {
 
         --idx_r;
 
@@ -37,10 +37,16 @@ namespace RangeTable {
             return;
         }
 
-        const auto lvl = log2(idx_l ^ idx_r) + 1;
+        const std::int32_t lvl = log_2(idx_l ^ idx_r) + 1;
 
         f(lvl, idx_l);
         f(lvl, idx_r);
+
+    }
+
+    std::int32_t log_2(std::int32_t x) {
+
+        return 31 - __builtin_clz(x);
 
     }
 

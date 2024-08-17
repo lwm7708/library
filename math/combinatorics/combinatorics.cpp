@@ -1,49 +1,23 @@
+#pragma once
+
 #include <algorithm>
+#include <cstdint>
 #include <vector>
 
 template <typename T>
-class Combinatorics {
+class combinatorics {
 
 private:
 
-    std::vector<T> facts = std::vector<T>();
-    std::vector<T> inv_facts = std::vector<T>();
-    int ptr = 0;
+    std::vector<T> facts;
+    std::vector<T> inv_facts;
+    std::int32_t nxt;
 
 public:
 
-    auto reserve(int size) {
+    explicit combinatorics() : nxt(0) {}
 
-        if (ptr == 0) {
-            facts.emplace_back(1);
-            inv_facts.emplace_back(1);
-            ptr = 1;
-        }
-
-        if (size < ptr) {
-            return;
-        }
-
-        const auto sz = std::min(1 << (31 - __builtin_clz(size * 2 - 1)), T::getModulus() - 1);
-
-        facts.resize(sz + 1);
-        inv_facts.resize(sz + 1);
-
-        for (auto i = ptr; i <= sz; ++i) {
-            facts[i] = facts[i - 1] * T(i);
-        }
-
-        inv_facts[sz] = T(1) / facts[sz];
-
-        for (auto i = sz - 1; i >= ptr; --i) {
-            inv_facts[i] = inv_facts[i + 1] * T(i + 1);
-        }
-
-        ptr = sz + 1;
-
-    }
-
-    auto combine(int n, int k) {
+    T combine(std::int32_t n, std::int32_t k) {
 
         reserve(n);
 
@@ -51,7 +25,7 @@ public:
 
     }
 
-    auto getFact(int n) {
+    T get_fact(std::int32_t n) {
 
         reserve(n);
 
@@ -59,7 +33,7 @@ public:
 
     }
 
-    auto getInv(int n) {
+    T get_inv(std::int32_t n) {
 
         reserve(n);
 
@@ -67,7 +41,7 @@ public:
 
     }
 
-    auto getInvFact(int n) {
+    T get_inv_fact(std::int32_t n) {
 
         reserve(n);
 
@@ -75,11 +49,44 @@ public:
 
     }
 
-    auto permute(int n, int k) {
+    T permute(std::int32_t n, std::int32_t k) {
 
         reserve(n);
 
         return facts[n] * inv_facts[n - k];
+
+    }
+
+    void reserve(std::int32_t sz) {
+
+        if (nxt == 0) {
+            facts.emplace_back(1);
+            inv_facts.emplace_back(1);
+            nxt = 1;
+        }
+
+        if (sz < nxt) {
+            return;
+        }
+
+        const std::int32_t cap = std::min(
+            1 << (31 - __builtin_clz(sz * 2 - 1)), T::get_modulus() - 1
+        );
+
+        facts.resize(cap + 1);
+        inv_facts.resize(cap + 1);
+
+        for (std::int32_t i = nxt; i <= cap; ++i) {
+            facts[i] = facts[i - 1] * T(i);
+        }
+
+        inv_facts[cap] = T(1) / facts[cap];
+
+        for (std::int32_t i = cap - 1; i >= nxt; --i) {
+            inv_facts[i] = inv_facts[i + 1] * T(i + 1);
+        }
+
+        nxt = cap + 1;
 
     }
 

@@ -1,37 +1,40 @@
+#pragma once
+
 #include <algorithm>
+#include <cstdint>
 #include <vector>
 
-class BitSet {
+class bitset {
 
 private:
 
-    using BlockT = unsigned long long;
+    using blk_t = std::uint64_t;
 
-    int blks = 0;
-    std::vector<BlockT> data = std::vector<BlockT>();
-    BlockT mask = 0;
-    int sz = 0;
+    std::int32_t sz;
+    std::int32_t blks;
+    std::vector<blk_t> data;
+    blk_t mask;
 
 public:
 
-    class Reference {
+    class reference {
 
     private:
 
-        BlockT& blk;
-        BlockT mask = 0;
+        blk_t& blk;
+        blk_t mask;
 
     public:
 
-        explicit Reference(BlockT& block, int bit) : blk(block), mask(1llu << bit) {}
+        explicit reference(blk_t& blk, std::int32_t bit) : blk(blk), mask(blk_t(1) << bit) {}
 
         operator bool() const {
 
-            return blk & mask;
+            return (blk & mask) != 0;
 
         }
 
-        auto operator=(bool x) {
+        void operator=(bool x) {
 
             if (!x) {
                 blk &= ~mask;
@@ -43,115 +46,27 @@ public:
 
     };
 
-    explicit BitSet(
-        int sz
-    ) : blks((sz + 63) / 64), mask((sz % 64 ? 1llu << sz % 64 : 0) - 1), sz(sz) {
+    explicit bitset() : bitset(0) {}
 
-        data.resize(blks);
+    explicit bitset(
+        std::int32_t sz
+    ) : sz(sz), blks((sz + 63) / 64), data(blks), mask((sz % 64 ? blk_t(1) << (sz % 64) : 0) - 1) {}
 
-    }
+    reference operator[](std::int32_t pos) {
 
-    auto operator[](int pos) {
-
-        return Reference(data[pos / 64], pos % 64);
+        return reference(data[pos / 64], pos % 64);
 
     }
 
-    auto operator[](int pos) const {
+    bool operator[](std::int32_t pos) const {
 
-        return (data[pos / 64] & 1llu << pos % 64) != 0;
-
-    }
-
-    auto operator&=(const BitSet& other) {
-
-        for (auto i = 0; i < blks; ++i) {
-            data[i] &= other.data[i];
-        }
+        return (data[pos / 64] >> (pos % 64) & 1) == 1;
 
     }
 
-    auto operator^=(const BitSet& other) {
+    bitset operator~() const {
 
-        for (auto i = 0; i < blks; ++i) {
-            data[i] ^= other.data[i];
-        }
-
-    }
-
-    auto operator|=(const BitSet& other) {
-
-        for (auto i = 0; i < blks; ++i) {
-            data[i] |= other.data[i];
-        }
-
-    }
-
-    auto all() const {
-
-        for (auto i = 0; i < blks - 1; ++i) {
-            if (~data[i]) {
-                return false;
-            }
-        }
-
-        return (data[blks - 1] & mask) == mask;
-
-    }
-
-    auto any() const {
-
-        for (auto i = 0; i < blks - 1; ++i) {
-            if (data[i]) {
-                return true;
-            }
-        }
-
-        return (data[blks - 1] & mask) != 0;
-
-    }
-
-    auto count() const {
-
-        auto bits = __builtin_popcountll(data[blks - 1] & mask);
-
-        for (auto i = 0; i < blks - 1; ++i) {
-            bits += __builtin_popcountll(data[i]);
-        }
-
-        return bits;
-
-    }
-
-    auto flip() {
-
-        for (auto& x : data) {
-            x ^= ~0llu;
-        }
-
-    }
-
-    auto reset() {
-
-        std::fill(std::begin(data), std::end(data), 0);
-
-    }
-
-    auto set() {
-
-        std::fill(std::begin(data), std::end(data), ~0llu);
-
-    }
-
-    auto size() const {
-
-        return sz;
-
-    }
-
-    auto operator~() const {
-
-        auto res = *this;
+        bitset res = *this;
 
         res.flip();
 
@@ -159,17 +74,41 @@ public:
 
     }
 
-    auto operator<<=(int pos) {
+    void operator&=(const bitset& other) {
+
+        for (std::int32_t i = 0; i < blks; ++i) {
+            data[i] &= other.data[i];
+        }
+
+    }
+
+    void operator|=(const bitset& other) {
+
+        for (std::int32_t i = 0; i < blks; ++i) {
+            data[i] |= other.data[i];
+        }
+
+    }
+
+    void operator^=(const bitset& other) {
+
+        for (std::int32_t i = 0; i < blks; ++i) {
+            data[i] ^= other.data[i];
+        }
+
+    }
+
+    void operator<<=(std::int32_t pos) {
 
         if (pos >= sz) {
             reset();
             return;
         }
 
-        const auto bits = pos % 64;
-        const auto shft = pos / 64;
+        const std::int32_t bits = pos % 64;
+        const std::int32_t shft = pos / 64;
 
-        for (auto i = blks - 1; i >= shft; --i) {
+        for (std::int32_t i = blks - 1; i >= shft; --i) {
             data[i] = data[i - shft] << bits;
             if (bits && i > shft) {
                 data[i] |= data[i - shft - 1] >> (64 - bits);
@@ -180,7 +119,7 @@ public:
 
     }
 
-    auto operator>>=(int pos) {
+    void operator>>=(std::int32_t pos) {
 
         if (pos >= sz) {
             reset();
@@ -189,10 +128,10 @@ public:
 
         data[blks - 1] &= mask;
 
-        const auto bits = pos % 64;
-        const auto shft = pos / 64;
+        const std::int32_t bits = pos % 64;
+        const std::int32_t shft = pos / 64;
 
-        for (auto i = 0; i < blks - shft; ++i) {
+        for (std::int32_t i = 0; i < blks - shft; ++i) {
             data[i] = data[i + shft] >> bits;
             if (bits && i < blks - shft - 1) {
                 data[i] |= data[i + shft + 1] << (64 - bits);
@@ -203,33 +142,102 @@ public:
 
     }
 
-    auto none() const {
+    bool all() const {
+
+        for (std::int32_t i = 0; i < blks - 1; ++i) {
+            if (~data[i]) {
+                return false;
+            }
+        }
+
+        return (data[blks - 1] & mask) == mask;
+
+    }
+
+    bool any() const {
+
+        for (std::int32_t i = 0; i < blks - 1; ++i) {
+            if (data[i]) {
+                return true;
+            }
+        }
+
+        return (data[blks - 1] & mask) != 0;
+
+    }
+
+    std::int32_t count() const {
+
+        std::int32_t bits = __builtin_popcountll(data[blks - 1] & mask);
+
+        for (std::int32_t i = 0; i < blks - 1; ++i) {
+            bits += __builtin_popcountll(data[i]);
+        }
+
+        return bits;
+
+    }
+
+    void flip() {
+
+        for (auto& x : data) {
+            x ^= ~blk_t();
+        }
+
+    }
+
+    bool none() const {
 
         return !any();
 
     }
 
-    friend auto operator==(const BitSet& lhs, const BitSet& rhs) {
+    void reset() {
+
+        std::fill_n(std::begin(data), blks, 0);
+
+    }
+
+    void set() {
+
+        std::fill_n(std::begin(data), blks, ~blk_t());
+
+    }
+
+    std::int32_t size() const {
+
+        return sz;
+
+    }
+
+    friend bool operator==(const bitset& lhs, const bitset& rhs) {
 
         if (lhs.sz != rhs.sz) {
             return false;
         }
 
-        const auto& data_1 = lhs.data;
-        const auto& data_2 = rhs.data;
-        const auto len = lhs.blks;
+        const std::int32_t len = lhs.blks;
 
-        for (auto i = 0; i < len - 1; ++i) {
-            if (data_1[i] != data_2[i]) {
-                return false;
-            }
+        if (len == 0) {
+            return true;
         }
 
-        return ((data_1[len - 1] ^ data_2[len - 1]) & lhs.mask) == 0;
+        const std::vector<blk_t>& data_l = lhs.data;
+        const std::vector<blk_t>& data_r = rhs.data;
+
+        return std::equal(
+            std::begin(data_l), std::begin(data_l) + len - 1, std::begin(data_r)
+        ) && ((data_l[len - 1] ^ data_r[len - 1]) & lhs.mask) == 0;
 
     }
 
-    friend auto operator&(BitSet lhs, const BitSet& rhs) {
+    friend bool operator!=(const bitset& lhs, const bitset& rhs) {
+
+        return !(lhs == rhs);
+
+    }
+
+    friend bitset operator&(bitset lhs, const bitset& rhs) {
 
         lhs &= rhs;
 
@@ -237,15 +245,7 @@ public:
 
     }
 
-    friend auto operator^(BitSet lhs, const BitSet& rhs) {
-
-        lhs ^= rhs;
-
-        return lhs;
-
-    }
-
-    friend auto operator|(BitSet lhs, const BitSet& rhs) {
+    friend bitset operator|(bitset lhs, const bitset& rhs) {
 
         lhs |= rhs;
 
@@ -253,7 +253,15 @@ public:
 
     }
 
-    friend auto operator<<(BitSet lhs, int pos) {
+    friend bitset operator^(bitset lhs, const bitset& rhs) {
+
+        lhs ^= rhs;
+
+        return lhs;
+
+    }
+
+    friend bitset operator<<(bitset lhs, std::int32_t pos) {
 
         lhs <<= pos;
 
@@ -261,17 +269,11 @@ public:
 
     }
 
-    friend auto operator>>(BitSet lhs, int pos) {
+    friend bitset operator>>(bitset lhs, std::int32_t pos) {
 
         lhs >>= pos;
 
         return lhs;
-
-    }
-
-    friend auto operator!=(const BitSet& lhs, const BitSet& rhs) {
-
-        return !(lhs == rhs);
 
     }
 

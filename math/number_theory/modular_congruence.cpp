@@ -1,52 +1,33 @@
-#include <array>
-#include <utility>
+#pragma once
+
+#include "math/number_theory/extended_gcd.cpp"
 
 template <typename T>
-auto extendedGCD(T m, T n) {
-
-    auto a = T(1);
-    auto a_in = T();
-    auto b = T();
-    auto b_in = T(1);
-
-    while (n) {
-        const auto q = m / n;
-        a_in = std::exchange(a, a_in) - q * a_in;
-        b_in = std::exchange(b, b_in) - q * b_in;
-        n = std::exchange(m, n) - q * n;
-    }
-
-    return std::array<T, 3>({m, a, b});
-
-}
-
-template <typename T>
-class ModularCongruence {
+class modular_congruence {
 
 public:
 
-    T a = T();
-    T m = T(1);
+    T m;
+    T a;
 
-    explicit ModularCongruence() = default;
+    explicit modular_congruence() : modular_congruence(0, 0) {}
 
-    explicit ModularCongruence(T a, T m) : a(a), m(m) {}
+    explicit modular_congruence(T m, T a) : m(m), a(a) {}
 
-    auto operator&=(ModularCongruence other) {
+    void operator&=(modular_congruence other) {
 
-        const auto [other_a, other_m] = other;
+        const auto [dvsr, coef_1, coef_2] = extended_gcd(m, other.m);
 
-        const auto [div, coef_m, coef_n] = extendedGCD(m, other_m);
-
-        if ((a - other_a) % div) {
-            a = 0;
+        if ((a - other.a) % dvsr) {
             m = 0;
+            a = 0;
             return;
         }
 
-        const auto mult = m / div * other_m;
+        const T mult = m / dvsr * other.m;
 
-        a = (a + coef_m * (other_a - a) / div % (other_m / div) * m) % mult;
+        a = (a + (((coef_1 * (other.a - a)) / dvsr) % (other.m / dvsr)) * m) % mult;
+
         m = mult;
 
         if (a < 0) {
@@ -55,7 +36,7 @@ public:
 
     }
 
-    friend auto operator&(ModularCongruence lhs, ModularCongruence rhs) {
+    friend modular_congruence operator&(modular_congruence lhs, modular_congruence rhs) {
 
         lhs &= rhs;
 

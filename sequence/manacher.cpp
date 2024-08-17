@@ -1,16 +1,19 @@
+#pragma once
+
 #include <algorithm>
+#include <cstdint>
 #include <vector>
 
 template <typename It>
-auto manacher(It it_l, It it_r) {
+std::vector<std::int32_t> manacher(It it_l, It it_r) {
 
-    auto ptr_l = 0;
-    auto ptr_r = 0;
-    const auto sz = it_r - it_l;
+    std::int32_t ptr_l = 0;
+    std::int32_t ptr_r = 0;
+    const std::int32_t sz = it_r - it_l;
 
-    auto lens = std::vector<int>(sz);
+    std::vector<std::int32_t> lens(sz);
 
-    for (auto i = 0; i < sz; ++i) {
+    for (std::int32_t i = 0; i < sz; ++i) {
         if (i < ptr_r) {
             lens[i] = std::min(lens[ptr_l + ptr_r - i], ptr_r - i);
         }

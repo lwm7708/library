@@ -1,103 +1,87 @@
-#include <array>
-#include <utility>
+#pragma once
 
-template <typename T>
-auto extendedGCD(T m, T n) {
+#include <cstdint>
 
-    auto a = T(1);
-    auto a_in = T();
-    auto b = T();
-    auto b_in = T(1);
+#include "math/number_theory/extended_gcd.cpp"
 
-    while (n) {
-        const auto q = m / n;
-        a_in = std::exchange(a, a_in) - q * a_in;
-        b_in = std::exchange(b, b_in) - q * b_in;
-        n = std::exchange(m, n) - q * n;
-    }
-
-    return std::array<T, 3>({m, a, b});
-
-}
-
-template <int MOD>
-class ModularInteger {
+template <std::int32_t MOD>
+class modular_integer {
 
 private:
 
-    static constexpr auto MODULUS = MOD;
+    static constexpr std::int32_t MODULUS = MOD;
 
 public:
 
-    static auto getModulus() {
+    static std::int32_t get_modulus() {
 
         return MODULUS;
 
     }
 
-    int val = 0;
+    std::int32_t val;
 
-    explicit ModularInteger() = default;
+    explicit modular_integer() : modular_integer(0) {}
 
-    explicit ModularInteger(long long val) : val(val % MODULUS) {
+    explicit modular_integer(std::int64_t val) : val(val % get_modulus()) {
 
         if (this->val < 0) {
-            this->val += MODULUS;
+            this->val += get_modulus();
         }
 
     }
 
-    auto operator-() const {
+    modular_integer operator-() const {
 
-        return ModularInteger(-val);
-
-    }
-
-    auto operator++() {
-
-        val = val < MODULUS - 1 ? val + 1 : 0;
+        return modular_integer(-val);
 
     }
 
-    auto operator--() {
+    void operator++() {
 
-        val = val ? val - 1 : MODULUS - 1;
+        *this += modular_integer(1);
 
     }
 
-    auto operator+=(ModularInteger other) {
+    void operator--() {
 
-        if (other.val >= MODULUS - val) {
-            val -= MODULUS;
+        *this -= modular_integer(1);
+
+    }
+
+    void operator+=(modular_integer other) {
+
+        if (other.val >= get_modulus() - val) {
+            val -= get_modulus();
         }
 
         val += other.val;
 
     }
 
-    auto operator-=(ModularInteger other) {
+    void operator-=(modular_integer other) {
 
         val -= other.val;
 
         if (val < 0) {
-            val += MODULUS;
+            val += get_modulus();
         }
 
     }
 
-    auto operator*=(ModularInteger other) {
+    void operator*=(modular_integer other) {
 
-        val = static_cast<long long>(val) * other.val % MODULUS;
-
-    }
-
-    auto operator/=(ModularInteger other) {
-
-        *this *= ModularInteger(extendedGCD(other.val, MODULUS)[1]);
+        val = (std::int64_t(val) * other.val) % get_modulus();
 
     }
 
-    friend auto operator+(ModularInteger lhs, ModularInteger rhs) {
+    void operator/=(modular_integer other) {
+
+        *this *= modular_integer(extended_gcd(other.val, get_modulus())[1]);
+
+    }
+
+    friend modular_integer operator+(modular_integer lhs, modular_integer rhs) {
 
         lhs += rhs;
 
@@ -105,7 +89,7 @@ public:
 
     }
 
-    friend auto operator-(ModularInteger lhs, ModularInteger rhs) {
+    friend modular_integer operator-(modular_integer lhs, modular_integer rhs) {
 
         lhs -= rhs;
 
@@ -113,7 +97,7 @@ public:
 
     }
 
-    friend auto operator*(ModularInteger lhs, ModularInteger rhs) {
+    friend modular_integer operator*(modular_integer lhs, modular_integer rhs) {
 
         lhs *= rhs;
 
@@ -121,7 +105,7 @@ public:
 
     }
 
-    friend auto operator/(ModularInteger lhs, ModularInteger rhs) {
+    friend modular_integer operator/(modular_integer lhs, modular_integer rhs) {
 
         lhs /= rhs;
 

@@ -1,17 +1,20 @@
+#pragma once
+
 #include <algorithm>
+#include <cstdint>
 #include <vector>
 
 template <typename It>
-auto zFunction(It it_l, It it_r) {
+std::vector<std::int32_t> z_function(It it_l, It it_r) {
 
-    auto ptr_l = 0;
-    auto ptr_r = 0;
-    const auto sz = it_r - it_l;
+    std::int32_t ptr_l = 0;
+    std::int32_t ptr_r = 0;
+    const std::int32_t sz = it_r - it_l;
 
-    auto vals = std::vector<int>(sz);
+    std::vector<std::int32_t> vals(sz);
 
-    for (auto i = 1; i < sz; ++i) {
-        auto& len = vals[i];
+    for (std::int32_t i = 1; i < sz; ++i) {
+        std::int32_t& len = vals[i];
         if (i < ptr_r) {
             len = std::min(vals[i - ptr_l], ptr_r - i);
         }

@@ -1,76 +1,79 @@
+#pragma once
+
 #include <cmath>
+#include <cstdint>
 
 template <typename T>
-class Point {
+class point {
 
 public:
 
-    static auto cross(Point a, Point b) {
+    static T cross(point a, point b) {
 
         return a.x * b.y - a.y * b.x;
 
     }
 
-    static auto dot(Point a, Point b) {
+    static T dot(point a, point b) {
 
         return a.x * b.x + a.y * b.y;
 
     }
 
-    T x = T();
-    T y = T();
+    T x;
+    T y;
 
-    explicit Point() = default;
+    explicit point() : point(0, 0) {}
 
-    explicit Point(T x, T y) : x(x), y(y) {}
+    explicit point(T x, T y) : x(x), y(y) {}
 
-    auto operator-() const {
+    point operator-() const {
 
-        return Point(-x, -y);
+        return point(-x, -y);
 
     }
 
-    auto operator+=(Point other) {
+    void operator+=(point other) {
 
         x += other.x;
         y += other.y;
 
     }
 
-    auto operator-=(Point other) {
+    void operator-=(point other) {
 
         x -= other.x;
         y -= other.y;
 
     }
 
-    auto operator*=(T fact) {
+    void operator*=(T fact) {
 
         x *= fact;
         y *= fact;
 
     }
 
-    auto operator/=(T div) {
+    void operator/=(T dvsr) {
 
-        x /= div;
-        y /= div;
-
-    }
-
-    auto norm() const {
-
-        return Point::dot(*this, *this);
+        x /= dvsr;
+        y /= dvsr;
 
     }
 
-    auto length() const {
+    double length() const {
 
-        return std::hypot(x, y);
+        return std::sqrt(norm());
 
     }
 
-    auto quadrant() const {
+    T norm() const {
+
+        return dot(*this, *this);
+
+    }
+
+    std::int32_t quadrant() const {
 
         if (y == 0) {
             if (x == 0) {
@@ -87,13 +90,19 @@ public:
 
     }
 
-    friend auto operator==(Point lhs, Point rhs) {
+    friend bool operator==(point lhs, point rhs) {
 
         return lhs.x == rhs.x && lhs.y == rhs.y;
 
     }
 
-    friend auto operator+(Point lhs, Point rhs) {
+    friend bool operator!=(point lhs, point rhs) {
+
+        return !(lhs == rhs);
+
+    }
+
+    friend point operator+(point lhs, point rhs) {
 
         lhs += rhs;
 
@@ -101,7 +110,7 @@ public:
 
     }
 
-    friend auto operator-(Point lhs, Point rhs) {
+    friend point operator-(point lhs, point rhs) {
 
         lhs -= rhs;
 
@@ -109,7 +118,7 @@ public:
 
     }
 
-    friend auto operator*(Point lhs, T rhs) {
+    friend point operator*(point lhs, T rhs) {
 
         lhs *= rhs;
 
@@ -117,17 +126,17 @@ public:
 
     }
 
-    friend auto operator/(Point lhs, T rhs) {
+    friend point operator*(T lhs, point rhs) {
+
+        return rhs * lhs;
+
+    }
+
+    friend point operator/(point lhs, T rhs) {
 
         lhs /= rhs;
 
         return lhs;
-
-    }
-
-    friend auto operator*(T lhs, Point rhs) {
-
-        return rhs * lhs;
 
     }
 
