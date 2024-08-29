@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <deque>
 #include <numeric>
+#include <optional>
 #include <queue>
 #include <string>
 #include <utility>
@@ -254,31 +255,31 @@ TEST_CASE("dinic") {
 
 TEST_CASE("diophantine") {
 
-    auto res = diophantine(0, 0, 0);
+    std::optional<std::array<std::int32_t, 2>> res = diophantine<std::int32_t>(0, 0, 0);
 
-    CHECK(res.valid);
+    CHECK(res);
 
-    CHECK(res.x * 0 + res.y * 0 == 0);
+    CHECK((*res)[0] * 0 + (*res)[1] * 0 == 0);
 
-    res = diophantine(0, 0, 1);
+    res = diophantine<std::int32_t>(0, 0, 1);
 
-    CHECK(!res.valid);
+    CHECK(!res);
 
-    res = diophantine(3, 5, -1);
+    res = diophantine<std::int32_t>(3, 5, -1);
 
-    CHECK(res.valid);
+    CHECK(res);
 
-    CHECK(res.x * 3 + res.y * 5 == -1);
+    CHECK((*res)[0] * 3 + (*res)[1] * 5 == -1);
 
-    res = diophantine(2, 4, -3);
+    res = diophantine<std::int32_t>(2, 4, -3);
 
-    CHECK(!res.valid);
+    CHECK(!res);
 
-    res = diophantine(3, 0, -9);
+    res = diophantine<std::int32_t>(3, 0, -9);
 
-    CHECK(res.valid);
+    CHECK(res);
 
-    CHECK(res.x * 3 + res.y * 0 == -9);
+    CHECK((*res)[0] * 3 + (*res)[1] * 0 == -9);
 
 }
 

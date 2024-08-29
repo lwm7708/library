@@ -1,28 +1,26 @@
 #pragma once
 
+#include <array>
 #include <cstdlib>
+#include <optional>
 
 #include "math/number_theory/extended_gcd.cpp"
 
 template <typename T>
-auto diophantine(T a, T b, T c) {
+std::optional<std::array<T, 2>> diophantine(T a, T b, T c) {
 
-    struct result {
+    using arr_t = std::array<T, 2>;
 
-        T x;
-        T y;
-        bool valid;
-
-    };
+    using res_t = std::optional<arr_t>;
 
     if (a == 0 && b == 0) {
-        return result({0, 0, c == 0});
+        return c == 0 ? res_t(arr_t()) : res_t();
     }
 
     auto [dvsr, x, y] = extended_gcd(std::abs(a), std::abs(b));
 
     if (c % dvsr) {
-        return result({0, 0, false});
+        return res_t();
     }
 
     x *= c / dvsr;
@@ -36,6 +34,6 @@ auto diophantine(T a, T b, T c) {
         y = -y;
     }
 
-    return result({x, y, true});
+    return res_t(arr_t({x, y}));
 
 }
