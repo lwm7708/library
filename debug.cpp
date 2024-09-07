@@ -1,5 +1,6 @@
 #include <array>
 #include <bitset>
+#include <complex>
 #include <cstddef>
 #include <deque>
 #include <forward_list>
@@ -111,6 +112,9 @@ namespace debug {
 
     template <std::size_t N>
     std::string fmt(const std::bitset<N>&);
+
+    template <typename T>
+    std::string fmt(const std::complex<T>&);
 
     template <typename T1, typename T2>
     std::string fmt(const std::pair<T1, T2>&);
@@ -239,6 +243,17 @@ namespace debug {
     std::string fmt(const std::bitset<N>& val) {
 
         return val.to_string();
+
+    }
+
+    template <typename T>
+    std::string fmt(const std::complex<T>& val) {
+
+        const T imag = std::imag(val);
+
+        return fmt(
+            std::real(val)
+        ) + ' ' + (imag >= 0 ? '+' : '-') + ' ' + fmt(std::abs(imag)) + 'i';
 
     }
 
