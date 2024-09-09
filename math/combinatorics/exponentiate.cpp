@@ -1,15 +1,15 @@
 #pragma once
 
 template <typename T, typename U>
-T exponentiate(T base, U pwr, const T& id = T(1)) {
+T exponentiate(T base, U pow, const T& id = T(1)) {
 
     T res = id;
 
-    while (pwr > 0) {
-        if (pwr & 1) {
+    while (pow > 0) {
+        if (pow & 1) {
             res *= base;
         }
-        pwr >>= 1;
+        pow >>= 1;
         base *= base;
     }
 
