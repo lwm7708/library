@@ -4,7 +4,7 @@
 
 namespace segment_tree {
 
-    std::int32_t log_2(std::int32_t);
+    constexpr std::int32_t log_2(std::int32_t);
 
     template <typename P>
     std::int32_t for_lvls(std::int32_t node, std::int32_t sz, bool dir, P p) {
@@ -72,7 +72,7 @@ namespace segment_tree {
 
     }
 
-    std::int32_t log_2(std::int32_t x) {
+    constexpr std::int32_t log_2(std::int32_t x) {
 
         return 31 - __builtin_clz(x);
 

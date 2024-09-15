@@ -4,7 +4,7 @@
 
 namespace range_table {
 
-    std::int32_t log_2(std::int32_t);
+    constexpr std::int32_t log_2(std::int32_t);
 
     template <typename F>
     void for_all(std::int32_t sz, F f) {
@@ -44,7 +44,7 @@ namespace range_table {
 
     }
 
-    std::int32_t log_2(std::int32_t x) {
+    constexpr std::int32_t log_2(std::int32_t x) {
 
         return 31 - __builtin_clz(x);
 
