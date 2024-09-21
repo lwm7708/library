@@ -213,7 +213,7 @@ namespace debug {
         std::string str("{");
 
         for (auto it = std::begin(val); it != std::end(val); ++it) {
-            str.append(format(it->first) + ": " + format(it->second));
+            str.append(fmt(it->first) + ": " + fmt(it->second));
             if (std::next(it) != std::end(val)) {
                 str.append(", ");
             }
