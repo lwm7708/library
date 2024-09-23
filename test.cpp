@@ -211,6 +211,8 @@ TEST_CASE("combinatorics") {
 
     combinatorics<modular_integer<53>> comb;
 
+    CHECK(comb.combine(2, 3).val == 0);
+    CHECK(comb.combine(2, -1).val == 0);
     CHECK(comb.combine(8, 3).val == 3);
     CHECK(comb.combine(51, 8).val == 9);
 
@@ -223,6 +225,7 @@ TEST_CASE("combinatorics") {
     CHECK(comb.get_inv_fact(8).val == 4);
     CHECK(comb.get_inv_fact(51).val == 1);
 
+    CHECK(comb.permute(-2, 3).val == 0);
     CHECK(comb.permute(8, 3).val == 18);
     CHECK(comb.permute(51, 8).val == 42);
 

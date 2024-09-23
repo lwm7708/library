@@ -19,6 +19,10 @@ public:
 
     T combine(std::int32_t n, std::int32_t k) {
 
+        if (n < 0 || k < 0 || n < k) {
+            return T();
+        }
+
         reserve(n);
 
         return facts[n] * inv_facts[k] * inv_facts[n - k];
@@ -50,6 +54,10 @@ public:
     }
 
     T permute(std::int32_t n, std::int32_t k) {
+
+        if (n < 0 || k < 0 || n < k) {
+            return T();
+        }
 
         reserve(n);
 
