@@ -22,6 +22,7 @@
 #include "graph/dinic.cpp"
 #include "hashing/integral_hash.cpp"
 #include "math/algebra/diophantine.cpp"
+#include "math/algebra/fast_fourier_transform.cpp"
 #include "math/algebra/matrix.cpp"
 #include "math/algebra/xor_basis.cpp"
 #include "math/combinatorics/combinatorics.cpp"
@@ -397,6 +398,29 @@ TEST_CASE("extended_gcd") {
     CHECK(res[0] == std::gcd(37, 4));
 
     CHECK(res[1] * 37 + res[2] * 4 == res[0]);
+
+}
+
+TEST_CASE("fast_fourier_transform") {
+
+    using num_t = modular_integer<998244353>;
+
+    std::vector poly({num_t(3), num_t(7), num_t(4), num_t(2)});
+    const std::vector rts({num_t(1), num_t(998244352), num_t(911660635)});
+
+    poly = fast_fourier_transform(poly, false, rts);
+
+    CHECK(poly[0].val == 16);
+    CHECK(poly[1].val == 565325762);
+    CHECK(poly[2].val == 998244351);
+    CHECK(poly[3].val == 432918589);
+
+    poly = fast_fourier_transform(poly, true, rts);
+
+    CHECK(poly[0].val == 3);
+    CHECK(poly[1].val == 7);
+    CHECK(poly[2].val == 4);
+    CHECK(poly[3].val == 2);
 
 }
 
