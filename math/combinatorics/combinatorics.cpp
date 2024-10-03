@@ -31,6 +31,10 @@ public:
 
     T get_fact(std::int32_t n) {
 
+        if (n < 0) {
+            return T();
+        }
+
         reserve(n);
 
         return facts[n];
@@ -39,6 +43,10 @@ public:
 
     T get_inv(std::int32_t n) {
 
+        if (n < 0) {
+            return T();
+        }
+
         reserve(n);
 
         return inv_facts[n] * facts[n - 1];
@@ -46,6 +54,10 @@ public:
     }
 
     T get_inv_fact(std::int32_t n) {
+
+        if (n < 0) {
+            return T();
+        }
 
         reserve(n);
 

@@ -217,12 +217,15 @@ TEST_CASE("combinatorics") {
     CHECK(comb.combine(8, 3).val == 3);
     CHECK(comb.combine(51, 8).val == 9);
 
+    CHECK(comb.get_fact(-3).val == 0);
     CHECK(comb.get_fact(8).val == 40);
     CHECK(comb.get_fact(51).val == 1);
 
+    CHECK(comb.get_inv(-3).val == 0);
     CHECK(comb.get_inv(8).val == 20);
     CHECK(comb.get_inv(51).val == 26);
 
+    CHECK(comb.get_inv_fact(-3).val == 0);
     CHECK(comb.get_inv_fact(8).val == 4);
     CHECK(comb.get_inv_fact(51).val == 1);
 
