@@ -12,7 +12,6 @@ private:
 
     std::int32_t sz;
     std::int32_t blks;
-    std::vector<blk_t> data;
     blk_t mask;
 
 public:
@@ -46,11 +45,13 @@ public:
 
     };
 
+    std::vector<blk_t> data;
+
     explicit bitset() : bitset(0) {}
 
     explicit bitset(
         std::int32_t sz
-    ) : sz(sz), blks((sz + 63) / 64), data(blks), mask((sz % 64 ? blk_t(1) << (sz % 64) : 0) - 1) {}
+    ) : sz(sz), blks((sz + 63) / 64), mask((sz % 64 ? blk_t(1) << (sz % 64) : 0) - 1), data(blks) {}
 
     reference operator[](std::int32_t pos) {
 
