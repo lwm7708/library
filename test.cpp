@@ -37,6 +37,7 @@
 #include "math/number_theory/modular_integer.cpp"
 #include "math/number_theory/pollard_rho.cpp"
 #include "math/number_theory/sieve.cpp"
+#include "sequence/kasai.cpp"
 #include "sequence/manacher.cpp"
 #include "sequence/prefix_function.cpp"
 #include "sequence/sequence_hasher.cpp"
@@ -484,6 +485,16 @@ TEST_CASE("integral_hash") {
     CHECK(hshr(33) != hshr(89));
     CHECK(hshr(33) != hshr(-23));
     CHECK(hshr(33) == hshr(33));
+
+}
+
+TEST_CASE("kasai") {
+
+    using vec_t = std::vector<std::int32_t>;
+
+    const std::string str("dcafac ");
+
+    CHECK(kasai(std::begin(str), vec_t({6, 4, 2, 5, 1, 0, 3})) == vec_t({0, 1, 0, 1, 0, 0}));
 
 }
 
