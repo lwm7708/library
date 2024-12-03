@@ -24,6 +24,7 @@
 #include "math/algebra/diophantine.cpp"
 #include "math/algebra/fast_fourier_transform.cpp"
 #include "math/algebra/matrix.cpp"
+#include "math/algebra/two_sat.cpp"
 #include "math/algebra/xor_basis.cpp"
 #include "math/combinatorics/combinatorics.cpp"
 #include "math/combinatorics/exponentiate.cpp"
@@ -1041,6 +1042,46 @@ TEST_CASE("suffix_array") {
     str.assign("dcafac ");
 
     CHECK(suffix_array(std::begin(str), std::end(str)) == vec_t({6, 4, 2, 5, 1, 0, 3}));
+
+}
+
+TEST_CASE("two_sat") {
+
+    two_sat slvr(3);
+
+    slvr.add(0, true, 1, false);
+    slvr.add(0, false, 1, true);
+    slvr.add(0, true, 1, true);
+    slvr.add(0, false, 2, true);
+
+    auto res = slvr.solve();
+
+    CHECK(res);
+
+    bool val = (*res)[0] || !(*res)[1];
+
+    CHECK(val);
+
+    val = !(*res)[0] || (*res)[1];
+
+    CHECK(val);
+
+    val = !(*res)[0] || !(*res)[1];
+
+    CHECK(val);
+
+    val = (*res)[0] || !(*res)[2];
+
+    CHECK(val);
+
+    slvr = two_sat(2);
+
+    slvr.add(0, false, 1, false);
+    slvr.add(0, false, 1, true);
+    slvr.add(0, true, 1, false);
+    slvr.add(0, true, 1, true);
+
+    CHECK(!slvr.solve());
 
 }
 
