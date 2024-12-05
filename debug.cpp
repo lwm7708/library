@@ -354,3 +354,12 @@ void dbg(const T& val, const Ts&... rest) {
     dbg(rest...);
 
 }
+
+template <typename... Ts>
+void dbg_if(bool cond, const Ts&... rest) {
+
+    if (cond) {
+        dbg(rest...);
+    }
+
+}
