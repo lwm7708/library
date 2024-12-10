@@ -68,23 +68,23 @@ public:
             }
             std::vector<std::int32_t> ptrs(sz);
             tot_flow += y_combinator(
-                [&](auto self, std::int32_t node, T flow_in) -> T {
+                [&](auto self, std::int32_t node, T flow_i) -> T {
                     if (node == sink) {
-                        return flow_in;
+                        return flow_i;
                     }
-                    T flow_ot = 0;
-                    while (ptrs[node] < std::int32_t(std::size(adj[node])) && flow_ot < flow_in) {
+                    T flow_o = 0;
+                    while (ptrs[node] < std::int32_t(std::size(adj[node])) && flow_o < flow_i) {
                         const std::int32_t idx = adj[node][ptrs[node]];
                         auto& [nbr, cap] = edges[idx];
                         if (lvls[nbr] == lvls[node] + 1 && cap) {
-                            const T c_flow = self(nbr, std::min(cap, flow_in - flow_ot));
-                            flow_ot += c_flow;
+                            const T c_flow = self(nbr, std::min(cap, flow_i - flow_o));
+                            flow_o += c_flow;
                             cap -= c_flow;
                             edges[idx ^ 1].second += c_flow;
                         }
-                        ptrs[node] += flow_ot < flow_in;
+                        ptrs[node] += flow_o < flow_i;
                     }
-                    return flow_ot;
+                    return flow_o;
                 }
             )(src, mx_flow + 1);
         }
