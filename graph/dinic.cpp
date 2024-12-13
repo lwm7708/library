@@ -37,6 +37,12 @@ public:
 
     }
 
+    T get_flow(std::int32_t edge_idx) const {
+
+        return edges[edge_idx * 2 + 1].second;
+
+    }
+
     bool get_side(std::int32_t node) const {
 
         return lvls[node] == -1;

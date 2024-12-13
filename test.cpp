@@ -253,6 +253,12 @@ TEST_CASE("dinic") {
 
     CHECK(ntwk.push(0, 5) == 10);
 
+    CHECK(ntwk.get_flow(3) == 3);
+    CHECK(ntwk.get_flow(4) == 5);
+    CHECK(ntwk.get_flow(5) == 2);
+    CHECK(ntwk.get_flow(7) == 5);
+    CHECK(ntwk.get_flow(8) == 5);
+
     CHECK(!ntwk.get_side(0));
     CHECK(!ntwk.get_side(1));
     CHECK(!ntwk.get_side(2));
