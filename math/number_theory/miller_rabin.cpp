@@ -13,7 +13,7 @@ bool miller_rabin(T n) {
         return false;
     }
 
-    std::vector<std::int32_t> bases({2, 3, 5, 6});
+    std::vector<std::int32_t> bases({2, 3, 5, 7});
     const std::int32_t s = __builtin_ctzll(n - 1);
 
     if (std::is_same_v<T, std::int64_t>) {
