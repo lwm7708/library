@@ -437,30 +437,7 @@ TEST_CASE("fast_fourier_transform") {
 
 TEST_CASE("fenwick_tree") {
 
-    using opt_t = std::pair<std::int32_t, bool>;
-
     std::queue<std::int32_t> nodes;
-    std::queue<opt_t> opts;
-
-    opts.emplace(8, false);
-    opts.emplace(4, true);
-    opts.emplace(6, false);
-    opts.emplace(5, true);
-
-    CHECK(
-        fenwick_tree::for_lvls(
-            9,
-            [&](std::int32_t node) -> bool {
-                const auto [c_node, opt] = opts.front();
-                if (c_node == node) {
-                    opts.pop();
-                }
-                return opt;
-            }
-        ) == 5
-    );
-
-    CHECK(std::empty(opts));
 
     nodes.push(3);
     nodes.push(4);
@@ -908,45 +885,19 @@ TEST_CASE("segment_tree") {
     CHECK(segment_tree::log_2(11) == 3);
     CHECK(segment_tree::log_2(32) == 5);
 
-    using opt_t = std::pair<std::int32_t, bool>;
-
     std::queue<std::int32_t> nodes;
-    std::queue<opt_t> opts;
 
-    opts.emplace(1, false);
-    opts.emplace(2, true);
-    opts.emplace(5, true);
-
-    const auto pop_node = [&](std::int32_t node) -> void {
+    const auto pop = [&](std::int32_t node) -> void {
         if (nodes.front() == node) {
             nodes.pop();
         }
     };
-    const auto pop_opt = [&](std::int32_t node) -> bool {
-        const auto [c_node, opt] = opts.front();
-        if (node == c_node) {
-            opts.pop();
-        }
-        return opt;
-    };
-
-    CHECK(segment_tree::for_lvls(1, 8, false, pop_opt) == 11);
-
-    CHECK(std::empty(opts));
-
-    opts.emplace(1, false);
-    opts.emplace(3, false);
-    opts.emplace(7, true);
-
-    CHECK(segment_tree::for_lvls(1, 8, true, pop_opt) == 14);
-
-    CHECK(std::empty(opts));
 
     nodes.push(1);
     nodes.push(3);
     nodes.push(6);
 
-    segment_tree::for_pars(13, false, pop_node);
+    segment_tree::for_pars(13, false, pop);
 
     CHECK(std::empty(nodes));
 
@@ -954,7 +905,7 @@ TEST_CASE("segment_tree") {
     nodes.push(3);
     nodes.push(1);
 
-    segment_tree::for_pars(13, true, pop_node);
+    segment_tree::for_pars(13, true, pop);
 
     CHECK(std::empty(nodes));
 
@@ -962,7 +913,7 @@ TEST_CASE("segment_tree") {
     nodes.push(12);
     nodes.push(5);
 
-    segment_tree::for_rng(9, 13, pop_node);
+    segment_tree::for_rng(9, 13, pop);
 
     CHECK(std::empty(nodes));
 
@@ -970,7 +921,7 @@ TEST_CASE("segment_tree") {
     nodes.push(5);
     nodes.push(12);
 
-    segment_tree::for_rng_ord(9, 13, false, pop_node);
+    segment_tree::for_rng_ord(9, 13, false, pop);
 
     CHECK(std::empty(nodes));
 
@@ -978,7 +929,7 @@ TEST_CASE("segment_tree") {
     nodes.push(5);
     nodes.push(9);
 
-    segment_tree::for_rng_ord(9, 13, true, pop_node);
+    segment_tree::for_rng_ord(9, 13, true, pop);
 
     CHECK(std::empty(nodes));
 

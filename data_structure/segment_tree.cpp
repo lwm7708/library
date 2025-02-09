@@ -6,17 +6,6 @@ namespace segment_tree {
 
     constexpr std::int32_t log_2(std::int32_t);
 
-    template <typename P>
-    std::int32_t for_lvls(std::int32_t node, std::int32_t sz, bool dir, P p) {
-
-        while (node < sz) {
-            node = (node << 1 | dir) + (!dir ? p(node) : -p(node));
-        }
-
-        return node;
-
-    }
-
     template <typename F>
     void for_pars(std::int32_t node, bool dir, F f) {
 
