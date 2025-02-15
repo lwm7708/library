@@ -921,15 +921,7 @@ TEST_CASE("segment_tree") {
     nodes.push(5);
     nodes.push(12);
 
-    segment_tree::for_rng_ord(9, 13, false, pop);
-
-    CHECK(std::empty(nodes));
-
-    nodes.push(12);
-    nodes.push(5);
-    nodes.push(9);
-
-    segment_tree::for_rng_ord(9, 13, true, pop);
+    segment_tree::for_rng_ord(9, 13, pop);
 
     CHECK(std::empty(nodes));
 

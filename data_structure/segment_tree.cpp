@@ -36,26 +36,27 @@ namespace segment_tree {
     }
 
     template <typename F>
-    void for_rng_ord(std::int32_t node_l, std::int32_t node_r, bool dir, F f) {
+    void for_rng_ord(std::int32_t node_l, std::int32_t node_r, F f) {
 
-        std::int32_t base = !dir ? node_l - 1 : node_r;
+        if (node_r - node_l <= 0) {
+            return;
+        }
+
         const std::int32_t mask = (1 << log_2((node_l - 1) ^ node_r)) - 1;
-        const std::int32_t shft = !dir ? 1 : -1;
 
-        std::int32_t node = (!dir ? -node_l : node_r) & mask;
+        std::int32_t node = -node_l & mask;
 
         while (node) {
             const std::int32_t bit = __builtin_ctz(node);
-            f((base >> bit) + shft);
+            f(((node_l - 1) >> bit) + 1);
             node ^= 1 << bit;
         }
 
-        base = dir ? node_l - 1 : node_r;
-        node = (dir ? -node_l : node_r) & mask;
+        node = node_r & mask;
 
         while (node) {
             const std::int32_t bit = log_2(node);
-            f((base >> bit) - shft);
+            f((node_r >> bit) - 1);
             node ^= 1 << bit;
         }
 
