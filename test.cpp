@@ -20,6 +20,7 @@
 #include "data_structure/range_table.cpp"
 #include "data_structure/segment_tree.cpp"
 #include "graph/dinic.cpp"
+#include "graph/heavy_light_decomposition.cpp"
 #include "hashing/integral_hash.cpp"
 #include "math/algebra/diophantine.cpp"
 #include "math/algebra/fast_fourier_transform.cpp"
@@ -462,6 +463,72 @@ TEST_CASE("fenwick_tree") {
 
 }
 
+TEST_CASE("heavy_light_decomposition") {
+
+    using rng_t = std::array<std::int32_t, 2>;
+
+    heavy_light_decomposition decomp(11);
+
+    decomp.add_edge(0, 1);
+    decomp.add_edge(0, 2);
+    decomp.add_edge(1, 3);
+    decomp.add_edge(1, 4);
+    decomp.add_edge(3, 5);
+    decomp.add_edge(4, 6);
+    decomp.add_edge(4, 7);
+    decomp.add_edge(2, 8);
+    decomp.add_edge(8, 9);
+    decomp.add_edge(5, 10);
+
+    decomp.init(0);
+
+    CHECK(decomp.get_dfn(0) == 0);
+    CHECK(decomp.get_dfn(2) == 8);
+    CHECK(decomp.get_dfn(4) == 5);
+    CHECK(decomp.get_dfn(8) == 9);
+
+    std::queue<rng_t> rngs;
+
+    rngs.push(rng_t({7, 8}));
+    rngs.push(rng_t({5, 6}));
+    rngs.push(rng_t({1, 4}));
+
+    const auto pop = [&](std::int32_t idx_l, std::int32_t idx_r) -> void {
+        if (rngs.front() == rng_t({idx_l, idx_r})) {
+            rngs.pop();
+        }
+    };
+
+    decomp.for_path(5, 7, pop);
+
+    CHECK(std::empty(rngs));
+
+    rngs.push(rng_t({8, 11}));
+    rngs.push(rng_t({0, 1}));
+
+    decomp.for_path(9, 0, pop);
+
+    decomp = heavy_light_decomposition(4);
+
+    decomp.add_edge(2, 3);
+    decomp.add_edge(3, 1);
+    decomp.add_edge(0, 1);
+
+    decomp.init(1);
+
+    CHECK(decomp.get_dfn(0) == 3);
+    CHECK(decomp.get_dfn(1) == 0);
+    CHECK(decomp.get_dfn(2) == 2);
+    CHECK(decomp.get_dfn(3) == 1);
+
+    rngs.push(rng_t({1, 2}));
+
+    decomp.for_path(3, 3, pop);
+
+    CHECK(std::empty(rngs));
+
+}
+
 TEST_CASE("integral_hash") {
 
     const integral_hash hshr;
@@ -887,15 +954,15 @@ TEST_CASE("segment_tree") {
 
     std::queue<std::int32_t> nodes;
 
+    nodes.push(1);
+    nodes.push(3);
+    nodes.push(6);
+
     const auto pop = [&](std::int32_t node) -> void {
         if (nodes.front() == node) {
             nodes.pop();
         }
     };
-
-    nodes.push(1);
-    nodes.push(3);
-    nodes.push(6);
 
     segment_tree::for_pars(13, false, pop);
 
