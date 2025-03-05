@@ -96,15 +96,15 @@ public:
 
     }
 
-    double perimeter() const {
+    double perim() const {
 
-        double perim = 0;
+        double cur_perim = 0;
 
         for (std::int32_t i = 0; i < sz; ++i) {
-            perim += seg_t(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]).length();
+            cur_perim += seg_t(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]).length();
         }
 
-        return perim;
+        return cur_perim;
 
     }
 

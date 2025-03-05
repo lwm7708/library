@@ -817,7 +817,7 @@ TEST_CASE("polygon") {
 
     CHECK(plygn_1.area() == 1);
 
-    CHECK(std::abs(plygn_1.perimeter() - (2 + std::sqrt(2))) < EPS);
+    CHECK(std::abs(plygn_1.perim() - (2 + std::sqrt(2))) < EPS);
 
     CHECK(plygn_1.size() == 3);
 
@@ -825,7 +825,7 @@ TEST_CASE("polygon") {
 
     CHECK(plygn_2.area() == 16);
 
-    CHECK(std::abs(plygn_2.perimeter() - (2 * std::sqrt(2)) * 4) < EPS);
+    CHECK(std::abs(plygn_2.perim() - (2 * std::sqrt(2)) * 4) < EPS);
 
     CHECK(plygn_2.size() == 4);
 
