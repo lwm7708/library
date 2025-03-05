@@ -22,16 +22,14 @@ public:
 
     std::int32_t find(std::int32_t node) {
 
-        std::int32_t ptr = node;
+        std::int32_t rep = node;
 
-        while (reps[ptr] != ptr) {
-            ptr = reps[ptr];
+        while (reps[rep] != rep) {
+            rep = reps[rep];
         }
 
-        const std::int32_t rep = std::exchange(ptr, node);
-
-        while (ptr != rep) {
-            ptr = std::exchange(reps[ptr], rep);
+        while (node != rep) {
+            node = std::exchange(reps[node], rep);
         }
 
         return rep;

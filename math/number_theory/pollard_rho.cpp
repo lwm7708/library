@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <cstdlib>
 #include <numeric>
 
 std::int64_t pollard_rho(std::int64_t n) {

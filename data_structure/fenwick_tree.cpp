@@ -5,23 +5,23 @@
 namespace fenwick_tree {
 
     template <typename F>
-    void for_pars(std::int32_t node, std::int32_t sz, F f) {
+    void for_pars(std::int32_t nd, std::int32_t sz, F f) {
 
-        ++node;
+        ++nd;
 
-        while (node <= sz) {
-            f(node);
-            node += node & -node;
+        while (nd <= sz) {
+            f(nd);
+            nd += nd & -nd;
         }
 
     }
 
     template <typename F>
-    void for_rng(std::int32_t node, F f) {
+    void for_rng(std::int32_t nd, F f) {
 
-        while (node) {
-            f(node);
-            node -= node & -node;
+        while (nd) {
+            f(nd);
+            nd -= nd & -nd;
         }
 
     }

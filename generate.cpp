@@ -26,10 +26,4 @@ namespace generate {
 
     }
 
-    char next_char(bool upper) {
-
-        return next_int<std::int32_t>(0, 26) + (!upper ? 'a' : 'A');
-
-    }
-
 }

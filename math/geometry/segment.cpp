@@ -21,7 +21,7 @@ public:
             if (prod == 0) {
                 return 0;
             }
-            return prod > 0 ? 1 : -1;
+            return prod < 0 ? -1 : 1;
         };
 
         const std::int32_t sgn_1 = sign(seg_1.b - seg_1.a, seg_2.a - seg_1.a);

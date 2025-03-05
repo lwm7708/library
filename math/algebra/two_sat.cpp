@@ -19,7 +19,7 @@ public:
 
     explicit two_sat(std::int32_t sz) : adj_f(sz * 2), adj_r(sz * 2), sz(sz) {}
 
-    void add(std::int32_t var_1, bool neg_1, std::int32_t var_2, bool neg_2) {
+    void add(std::int32_t var_1, std::int32_t neg_1, std::int32_t var_2, std::int32_t neg_2) {
 
         var_1 = var_1 * 2 ^ neg_1;
         var_2 = var_2 * 2 ^ neg_2;

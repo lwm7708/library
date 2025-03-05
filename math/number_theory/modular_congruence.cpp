@@ -16,19 +16,19 @@ public:
 
     void operator&=(modular_congruence other) {
 
-        const auto [dvsr, coef_1, coef_2] = extended_gcd(m, other.m);
+        const auto [gcd, coef_1, coef_2] = extended_gcd(m, other.m);
 
-        if ((a - other.a) % dvsr) {
+        if ((a - other.a) % gcd) {
             m = 0;
             a = 0;
             return;
         }
 
-        const T mult = m / dvsr * other.m;
+        const T lcm = m / gcd * other.m;
 
-        a = (a + (((coef_1 * (other.a - a)) / dvsr) % (other.m / dvsr)) * m) % mult;
+        a = (a + (((coef_1 * (other.a - a)) / gcd) % (other.m / gcd)) * m) % lcm;
 
-        m = mult;
+        m = lcm;
 
         if (a < 0) {
             a += m;

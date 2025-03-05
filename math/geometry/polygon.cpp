@@ -40,15 +40,15 @@ public:
 
     T area() const {
 
-        T c_area = 0;
+        T cur_area = 0;
 
         for (std::int32_t i = 0; i < sz; ++i) {
-            c_area += pt_t::cross(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]);
+            cur_area += pt_t::cross(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]);
         }
 
-        c_area = std::abs(c_area);
+        cur_area = std::abs(cur_area);
 
-        return c_area;
+        return cur_area;
 
     }
 
@@ -98,13 +98,13 @@ public:
 
     double perimeter() const {
 
-        double prmtr = 0;
+        double perim = 0;
 
         for (std::int32_t i = 0; i < sz; ++i) {
-            prmtr += seg_t(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]).length();
+            perim += seg_t(vtxs[i], vtxs[i < sz - 1 ? i + 1 : 0]).length();
         }
 
-        return prmtr;
+        return perim;
 
     }
 

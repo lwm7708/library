@@ -10,17 +10,17 @@ namespace range_table {
     void for_all(std::int32_t sz, F f) {
 
         for (std::int32_t i = 0; i < sz; ++i) {
-            f(0, i, true);
+            f(0, i, 1);
         }
 
         for (std::int32_t i = 1; i <= log_2(sz); ++i) {
-            const std::int32_t c_sz = 1 << (i - 1);
+            const std::int32_t cur_sz = 1 << (i - 1);
             for (std::int32_t j = 0; j < sz >> i; ++j) {
-                for (std::int32_t k = 1; k <= c_sz; ++k) {
-                    f(i, c_sz * (j * 2 + 1) - k, k == 1);
+                for (std::int32_t k = 1; k <= cur_sz; ++k) {
+                    f(i, cur_sz * (j * 2 + 1) - k, k == 1);
                 }
-                for (std::int32_t k = 0; k < c_sz; ++k) {
-                    f(i, c_sz * (j * 2 + 1) + k, k == 0);
+                for (std::int32_t k = 0; k < cur_sz; ++k) {
+                    f(i, cur_sz * (j * 2 + 1) + k, k == 0);
                 }
             }
         }

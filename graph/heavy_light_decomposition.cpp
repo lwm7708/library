@@ -12,16 +12,17 @@ private:
 
     std::int32_t sz;
     std::vector<std::vector<std::int32_t>> adj;
-    std::vector<std::int32_t> dfn;
     std::vector<std::int32_t> pars;
     std::vector<std::int32_t> deps;
     std::vector<std::int32_t> tops;
 
 public:
 
+    std::vector<std::int32_t> dfn;
+
     explicit heavy_light_decomposition(
         std::int32_t sz
-    ) : sz(sz), adj(sz), dfn(sz), pars(sz), deps(sz), tops(sz) {}
+    ) : sz(sz), adj(sz), pars(sz), deps(sz), tops(sz), dfn(sz) {}
 
     void add_edge(std::int32_t node_1, std::int32_t node_2) {
 
@@ -47,12 +48,6 @@ public:
         }
 
         f(dfn[node_1], dfn[node_2] + 1);
-
-    }
-
-    std::int32_t get_dfn(std::int32_t node) const {
-
-        return dfn[node];
 
     }
 

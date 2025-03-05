@@ -260,13 +260,6 @@ TEST_CASE("dinic") {
     CHECK(ntwk.get_flow(7) == 5);
     CHECK(ntwk.get_flow(8) == 5);
 
-    CHECK(!ntwk.get_side(0));
-    CHECK(!ntwk.get_side(1));
-    CHECK(!ntwk.get_side(2));
-    CHECK(ntwk.get_side(3));
-    CHECK(ntwk.get_side(4));
-    CHECK(ntwk.get_side(5));
-
 }
 
 TEST_CASE("diophantine") {
@@ -420,14 +413,14 @@ TEST_CASE("fast_fourier_transform") {
     std::vector poly({num_t(3), num_t(7), num_t(4), num_t(2)});
     const std::vector rts({num_t(1), num_t(998244352), num_t(911660635)});
 
-    poly = fast_fourier_transform(poly, false, rts);
+    poly = fast_fourier_transform(poly, 0, rts);
 
     CHECK(poly[0].val == 16);
     CHECK(poly[1].val == 565325762);
     CHECK(poly[2].val == 998244351);
     CHECK(poly[3].val == 432918589);
 
-    poly = fast_fourier_transform(poly, true, rts);
+    poly = fast_fourier_transform(poly, 1, rts);
 
     CHECK(poly[0].val == 3);
     CHECK(poly[1].val == 7);
@@ -438,28 +431,28 @@ TEST_CASE("fast_fourier_transform") {
 
 TEST_CASE("fenwick_tree") {
 
-    std::queue<std::int32_t> nodes;
+    std::queue<std::int32_t> nds;
 
-    nodes.push(3);
-    nodes.push(4);
-    nodes.push(8);
+    nds.push(3);
+    nds.push(4);
+    nds.push(8);
 
-    const auto pop = [&](std::int32_t node) -> void {
-        if (node == nodes.front()) {
-            nodes.pop();
+    const auto pop = [&](std::int32_t nd) -> void {
+        if (nd == nds.front()) {
+            nds.pop();
         }
     };
 
     fenwick_tree::for_pars(2, 8, pop);
 
-    CHECK(std::empty(nodes));
+    CHECK(std::empty(nds));
 
-    nodes.push(6);
-    nodes.push(4);
+    nds.push(6);
+    nds.push(4);
 
     fenwick_tree::for_rng(6, pop);
 
-    CHECK(std::empty(nodes));
+    CHECK(std::empty(nds));
 
 }
 
@@ -481,11 +474,6 @@ TEST_CASE("heavy_light_decomposition") {
     decomp.add_edge(5, 10);
 
     decomp.init(0);
-
-    CHECK(decomp.get_dfn(0) == 0);
-    CHECK(decomp.get_dfn(2) == 8);
-    CHECK(decomp.get_dfn(4) == 5);
-    CHECK(decomp.get_dfn(8) == 9);
 
     std::queue<rng_t> rngs;
 
@@ -515,11 +503,6 @@ TEST_CASE("heavy_light_decomposition") {
     decomp.add_edge(0, 1);
 
     decomp.init(1);
-
-    CHECK(decomp.get_dfn(0) == 3);
-    CHECK(decomp.get_dfn(1) == 0);
-    CHECK(decomp.get_dfn(2) == 2);
-    CHECK(decomp.get_dfn(3) == 1);
 
     rngs.push(rng_t({1, 2}));
 
@@ -872,7 +855,7 @@ TEST_CASE("range_table") {
 
     using node_t = std::array<std::int32_t, 2>;
 
-    using init_t = std::pair<node_t, bool>;
+    using init_t = std::pair<node_t, std::int32_t>;
 
     CHECK(range_table::log_2(11) == 3);
     CHECK(range_table::log_2(32) == 5);
@@ -880,26 +863,26 @@ TEST_CASE("range_table") {
     std::queue<init_t> inits;
     std::queue<node_t> nodes;
 
-    inits.emplace(node_t({0, 0}), true);
-    inits.emplace(node_t({0, 1}), true);
-    inits.emplace(node_t({0, 2}), true);
-    inits.emplace(node_t({0, 3}), true);
+    inits.emplace(node_t({0, 0}), 1);
+    inits.emplace(node_t({0, 1}), 1);
+    inits.emplace(node_t({0, 2}), 1);
+    inits.emplace(node_t({0, 3}), 1);
 
-    inits.emplace(node_t({1, 0}), true);
-    inits.emplace(node_t({1, 1}), true);
-    inits.emplace(node_t({1, 2}), true);
-    inits.emplace(node_t({1, 3}), true);
+    inits.emplace(node_t({1, 0}), 1);
+    inits.emplace(node_t({1, 1}), 1);
+    inits.emplace(node_t({1, 2}), 1);
+    inits.emplace(node_t({1, 3}), 1);
 
-    inits.emplace(node_t({2, 1}), true);
-    inits.emplace(node_t({2, 0}), false);
-    inits.emplace(node_t({2, 2}), true);
-    inits.emplace(node_t({2, 3}), false);
+    inits.emplace(node_t({2, 1}), 1);
+    inits.emplace(node_t({2, 0}), 0);
+    inits.emplace(node_t({2, 2}), 1);
+    inits.emplace(node_t({2, 3}), 0);
 
     range_table::for_all(
         4,
-        [&](std::int32_t lvl, std::int32_t idx, bool rst) -> void {
-            const auto [node, c_rst] = inits.front();
-            if (lvl == node[0] && idx == node[1] && rst == c_rst) {
+        [&](std::int32_t lvl, std::int32_t idx, std::int32_t rst) -> void {
+            const auto [node, cur_rst] = inits.front();
+            if (lvl == node[0] && idx == node[1] && rst == cur_rst) {
                 inits.pop();
             }
         }
@@ -952,45 +935,45 @@ TEST_CASE("segment_tree") {
     CHECK(segment_tree::log_2(11) == 3);
     CHECK(segment_tree::log_2(32) == 5);
 
-    std::queue<std::int32_t> nodes;
+    std::queue<std::int32_t> nds;
 
-    nodes.push(1);
-    nodes.push(3);
-    nodes.push(6);
+    nds.push(1);
+    nds.push(3);
+    nds.push(6);
 
-    const auto pop = [&](std::int32_t node) -> void {
-        if (nodes.front() == node) {
-            nodes.pop();
+    const auto pop = [&](std::int32_t nd) -> void {
+        if (nds.front() == nd) {
+            nds.pop();
         }
     };
 
-    segment_tree::for_pars(13, false, pop);
+    segment_tree::for_pars(13, 0, pop);
 
-    CHECK(std::empty(nodes));
+    CHECK(std::empty(nds));
 
-    nodes.push(6);
-    nodes.push(3);
-    nodes.push(1);
+    nds.push(6);
+    nds.push(3);
+    nds.push(1);
 
-    segment_tree::for_pars(13, true, pop);
+    segment_tree::for_pars(13, 1, pop);
 
-    CHECK(std::empty(nodes));
+    CHECK(std::empty(nds));
 
-    nodes.push(9);
-    nodes.push(12);
-    nodes.push(5);
+    nds.push(9);
+    nds.push(12);
+    nds.push(5);
 
     segment_tree::for_rng(9, 13, pop);
 
-    CHECK(std::empty(nodes));
+    CHECK(std::empty(nds));
 
-    nodes.push(9);
-    nodes.push(5);
-    nodes.push(12);
+    nds.push(9);
+    nds.push(5);
+    nds.push(12);
 
     segment_tree::for_rng_ord(9, 13, pop);
 
-    CHECK(std::empty(nodes));
+    CHECK(std::empty(nds));
 
 }
 
@@ -1065,10 +1048,10 @@ TEST_CASE("two_sat") {
 
     two_sat slvr(3);
 
-    slvr.add(0, true, 1, false);
-    slvr.add(0, false, 1, true);
-    slvr.add(0, true, 1, true);
-    slvr.add(0, false, 2, true);
+    slvr.add(0, 1, 1, 0);
+    slvr.add(0, 0, 1, 1);
+    slvr.add(0, 1, 1, 1);
+    slvr.add(0, 0, 2, 1);
 
     auto res = slvr.solve();
 
@@ -1092,10 +1075,10 @@ TEST_CASE("two_sat") {
 
     slvr = two_sat(2);
 
-    slvr.add(0, false, 1, false);
-    slvr.add(0, false, 1, true);
-    slvr.add(0, true, 1, false);
-    slvr.add(0, true, 1, true);
+    slvr.add(0, 0, 1, 0);
+    slvr.add(0, 0, 1, 1);
+    slvr.add(0, 1, 1, 0);
+    slvr.add(0, 1, 1, 1);
 
     CHECK(!slvr.solve());
 

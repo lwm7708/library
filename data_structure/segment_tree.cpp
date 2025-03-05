@@ -7,57 +7,57 @@ namespace segment_tree {
     constexpr std::int32_t log_2(std::int32_t);
 
     template <typename F>
-    void for_pars(std::int32_t node, bool dir, F f) {
+    void for_pars(std::int32_t nd, std::int32_t dir, F f) {
 
-        const std::int32_t lvls = log_2(node);
+        const std::int32_t lvls = log_2(nd);
 
         for (std::int32_t i = 1; i <= lvls; ++i) {
-            f(node >> (!dir ? lvls - i + 1 : i));
+            f(nd >> (dir == 0 ? lvls - i + 1 : i));
         }
 
     }
 
     template <typename F>
-    void for_rng(std::int32_t node_l, std::int32_t node_r, F f) {
+    void for_rng(std::int32_t nd_l, std::int32_t nd_r, F f) {
 
-        while (node_l < node_r) {
-            if (node_l & 1) {
-                f(node_l);
-                ++node_l;
+        while (nd_l < nd_r) {
+            if (nd_l & 1) {
+                f(nd_l);
+                ++nd_l;
             }
-            if (node_r & 1) {
-                --node_r;
-                f(node_r);
+            if (nd_r & 1) {
+                --nd_r;
+                f(nd_r);
             }
-            node_l >>= 1;
-            node_r >>= 1;
+            nd_l >>= 1;
+            nd_r >>= 1;
         }
 
     }
 
     template <typename F>
-    void for_rng_ord(std::int32_t node_l, std::int32_t node_r, F f) {
+    void for_rng_ord(std::int32_t nd_l, std::int32_t nd_r, F f) {
 
-        if (node_r - node_l <= 0) {
+        if (nd_r - nd_l <= 0) {
             return;
         }
 
-        const std::int32_t mask = (1 << log_2((node_l - 1) ^ node_r)) - 1;
+        const std::int32_t msk = (1 << log_2((nd_l - 1) ^ nd_r)) - 1;
 
-        std::int32_t node = -node_l & mask;
+        std::int32_t nd = -nd_l & msk;
 
-        while (node) {
-            const std::int32_t bit = __builtin_ctz(node);
-            f(((node_l - 1) >> bit) + 1);
-            node ^= 1 << bit;
+        while (nd) {
+            const std::int32_t bit = __builtin_ctz(nd);
+            f(((nd_l - 1) >> bit) + 1);
+            nd ^= 1 << bit;
         }
 
-        node = node_r & mask;
+        nd = nd_r & msk;
 
-        while (node) {
-            const std::int32_t bit = log_2(node);
-            f((node_r >> bit) - 1);
-            node ^= 1 << bit;
+        while (nd) {
+            const std::int32_t bit = log_2(nd);
+            f((nd_r >> bit) - 1);
+            nd ^= 1 << bit;
         }
 
     }

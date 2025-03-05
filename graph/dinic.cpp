@@ -43,13 +43,7 @@ public:
 
     }
 
-    bool get_side(std::int32_t node) const {
-
-        return lvls[node] == -1;
-
-    }
-
-    T push(std::int32_t src, std::int32_t sink) {
+    T push(std::int32_t src, std::int32_t dst) {
 
         T tot_flow = 0;
 
@@ -69,28 +63,28 @@ public:
                     }
                 }
             }
-            if (lvls[sink] == -1) {
+            if (lvls[dst] == -1) {
                 break;
             }
             std::vector<std::int32_t> ptrs(sz);
             tot_flow += y_combinator(
-                [&](auto self, std::int32_t node, T flow_i) -> T {
-                    if (node == sink) {
-                        return flow_i;
+                [&](auto self, std::int32_t node, T flow_in) -> T {
+                    if (node == dst) {
+                        return flow_in;
                     }
-                    T flow_o = 0;
-                    while (ptrs[node] < std::int32_t(std::size(adj[node])) && flow_o < flow_i) {
+                    T flow = 0;
+                    while (ptrs[node] < std::int32_t(std::size(adj[node])) && flow < flow_in) {
                         const std::int32_t idx = adj[node][ptrs[node]];
                         auto& [nbr, cap] = edges[idx];
                         if (lvls[nbr] == lvls[node] + 1 && cap) {
-                            const T c_flow = self(nbr, std::min(cap, flow_i - flow_o));
-                            flow_o += c_flow;
-                            cap -= c_flow;
-                            edges[idx ^ 1].second += c_flow;
+                            const T cur_flow = self(nbr, std::min(cap, flow_in - flow));
+                            flow += cur_flow;
+                            cap -= cur_flow;
+                            edges[idx ^ 1].second += cur_flow;
                         }
-                        ptrs[node] += flow_o < flow_i;
+                        ptrs[node] += flow < flow_in;
                     }
-                    return flow_o;
+                    return flow;
                 }
             )(src, mx_flow + 1);
         }
