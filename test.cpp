@@ -805,12 +805,6 @@ TEST_CASE("point") {
 
     CHECK(pt_1.norm() == 45);
 
-    CHECK(pt_1.quadrant() == 4);
-    CHECK(pt_2.quadrant() == 1);
-
-    CHECK(pt_t().quadrant() == 0);
-    CHECK(pt_t(-5, 0).quadrant() == 3);
-
     pt_1 = pt_t(22, -4);
     pt_2 = pt_t(3, 4);
 

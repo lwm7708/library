@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <cstdint>
 
 template <typename T>
 class point {
@@ -70,23 +69,6 @@ public:
     T norm() const {
 
         return dot(*this, *this);
-
-    }
-
-    std::int32_t quadrant() const {
-
-        if (y == 0) {
-            if (x == 0) {
-                return 0;
-            }
-            return x > 0 ? 1 : 3;
-        }
-
-        if (y > 0) {
-            return x > 0 ? 1 : 2;
-        }
-
-        return x < 0 ? 3 : 4;
 
     }
 
