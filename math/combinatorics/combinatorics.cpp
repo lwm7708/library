@@ -17,7 +17,7 @@ public:
 
     explicit combinatorics() : nxt(0) {}
 
-    T combine(std::int32_t n, std::int32_t k) {
+    T comb(std::int32_t n, std::int32_t k) {
 
         if (n < 0 || k < 0 || n < k) {
             return T();
@@ -29,7 +29,7 @@ public:
 
     }
 
-    T get_fact(std::int32_t n) {
+    T fact(std::int32_t n) {
 
         if (n < 0) {
             return T();
@@ -41,7 +41,7 @@ public:
 
     }
 
-    T get_inv(std::int32_t n) {
+    T inv(std::int32_t n) {
 
         if (n < 0) {
             return T();
@@ -53,7 +53,7 @@ public:
 
     }
 
-    T get_inv_fact(std::int32_t n) {
+    T inv_fact(std::int32_t n) {
 
         if (n < 0) {
             return T();
@@ -62,18 +62,6 @@ public:
         reserve(n);
 
         return inv_facts[n];
-
-    }
-
-    T permute(std::int32_t n, std::int32_t k) {
-
-        if (n < 0 || k < 0 || n < k) {
-            return T();
-        }
-
-        reserve(n);
-
-        return facts[n] * inv_facts[n - k];
 
     }
 

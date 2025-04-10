@@ -230,26 +230,22 @@ TEST_CASE("combinatorics") {
 
     combinatorics<modular_integer<53>> comb;
 
-    CHECK(comb.combine(2, 3).val == 0);
-    CHECK(comb.combine(2, -1).val == 0);
-    CHECK(comb.combine(8, 3).val == 3);
-    CHECK(comb.combine(51, 8).val == 9);
+    CHECK(comb.comb(2, 3).val == 0);
+    CHECK(comb.comb(2, -1).val == 0);
+    CHECK(comb.comb(8, 3).val == 3);
+    CHECK(comb.comb(51, 8).val == 9);
 
-    CHECK(comb.get_fact(-3).val == 0);
-    CHECK(comb.get_fact(8).val == 40);
-    CHECK(comb.get_fact(51).val == 1);
+    CHECK(comb.fact(-3).val == 0);
+    CHECK(comb.fact(8).val == 40);
+    CHECK(comb.fact(51).val == 1);
 
-    CHECK(comb.get_inv(-3).val == 0);
-    CHECK(comb.get_inv(8).val == 20);
-    CHECK(comb.get_inv(51).val == 26);
+    CHECK(comb.inv(-3).val == 0);
+    CHECK(comb.inv(8).val == 20);
+    CHECK(comb.inv(51).val == 26);
 
-    CHECK(comb.get_inv_fact(-3).val == 0);
-    CHECK(comb.get_inv_fact(8).val == 4);
-    CHECK(comb.get_inv_fact(51).val == 1);
-
-    CHECK(comb.permute(-2, 3).val == 0);
-    CHECK(comb.permute(8, 3).val == 18);
-    CHECK(comb.permute(51, 8).val == 42);
+    CHECK(comb.inv_fact(-3).val == 0);
+    CHECK(comb.inv_fact(8).val == 4);
+    CHECK(comb.inv_fact(51).val == 1);
 
 }
 
