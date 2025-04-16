@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <deque>
+#include <map>
 #include <numeric>
 #include <optional>
 #include <queue>
@@ -46,6 +47,7 @@
 #include "sequence/prefix_function.cpp"
 #include "sequence/sequence_hasher.cpp"
 #include "sequence/suffix_array.cpp"
+#include "sequence/suffix_automaton.cpp"
 #include "sequence/z_function.cpp"
 #include "utility/y_combinator.cpp"
 
@@ -1088,6 +1090,39 @@ TEST_CASE("suffix_array") {
     str.assign("dcafac ");
 
     CHECK(suffix_array(std::begin(str), std::end(str)) == vec_t({6, 4, 2, 5, 1, 0, 3}));
+
+}
+
+TEST_CASE("suffix_automaton") {
+
+    using mp_t = std::map<char, std::int32_t>;
+    using vec_t = std::vector<std::int32_t>;
+
+    suffix_automaton<char> sa(2);
+
+    sa.extend('a');
+    sa.extend('a');
+
+    CHECK(sa.lens == vec_t({0, 1, 2, 0}));
+    CHECK(sa.adj[0] == mp_t({std::make_pair('a', 1)}));
+    CHECK(sa.adj[1] == mp_t({std::make_pair('a', 2)}));
+    CHECK(sa.adj[2] == mp_t());
+    CHECK(sa.links == vec_t({-1, 0, 1, 0}));
+    CHECK(sa.idx == 3);
+
+    sa = suffix_automaton<char>(3);
+
+    sa.extend('a');
+    sa.extend('b');
+    sa.extend('a');
+
+    CHECK(sa.lens == vec_t({0, 1, 2, 3, 0, 0}));
+    CHECK(sa.adj[0] == mp_t({std::make_pair('a', 1), std::make_pair('b', 2)}));
+    CHECK(sa.adj[1] == mp_t({std::make_pair('b', 2)}));
+    CHECK(sa.adj[2] == mp_t({std::make_pair('a', 3)}));
+    CHECK(sa.adj[3] == mp_t());
+    CHECK(sa.links == vec_t({-1, 0, 0, 1, 0, 0}));
+    CHECK(sa.idx == 4);
 
 }
 
