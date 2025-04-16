@@ -20,6 +20,7 @@
 #include "data_structure/fenwick_tree.cpp"
 #include "data_structure/range_table.cpp"
 #include "data_structure/segment_tree.cpp"
+#include "data_structure/treap.cpp"
 #include "graph/centroid_decomposition.cpp"
 #include "graph/dinic.cpp"
 #include "graph/heavy_light_decomposition.cpp"
@@ -1123,6 +1124,75 @@ TEST_CASE("suffix_automaton") {
     CHECK(sa.adj[3] == mp_t());
     CHECK(sa.links == vec_t({-1, 0, 0, 1, 0, 0}));
     CHECK(sa.idx == 4);
+
+}
+
+TEST_CASE("treap") {
+
+    std::int32_t nxt = 0;
+    std::int32_t rt = -1;
+    treap tr(6);
+
+    const auto pull = [&](std::int32_t nd) -> void {
+        tr.szs[nd] = 1;
+        if (tr.nds_l[nd] != -1) {
+            tr.szs[nd] += tr.szs[tr.nds_l[nd]];
+        }
+        if (tr.nds_r[nd] != -1) {
+            tr.szs[nd] += tr.szs[tr.nds_r[nd]];
+        }
+    };
+    const auto push = [](std::int32_t) -> void {};
+
+    const auto merge = [&](std::int32_t nd_l, std::int32_t nd_r) -> std::int32_t {
+        return tr.merge(nd_l, nd_r, pull, push);
+    };
+    const auto split = [&](std::int32_t nd, std::int32_t rnk) -> treap::ret_t {
+        return tr.split(
+            nd,
+            [&](std::int32_t nd) -> bool {
+                const std::int32_t sz = tr.nds_l[nd] != -1 ? tr.szs[tr.nds_l[nd]] : 0;
+                if (sz < rnk) {
+                    rnk -= sz + 1;
+                    return true;
+                } else {
+                    return false;
+                }
+            }, pull, push
+        );
+    };
+
+    for (std::int32_t i = 0; i < 6; ++i) {
+        rt = merge(rt, tr.insert());
+    }
+
+    y_combinator(
+        [&](auto self, std::int32_t nd) -> void {
+            if (tr.nds_l[nd] != -1) {
+                self(tr.nds_l[nd]);
+            }
+            CHECK(nd == nxt);
+            ++nxt;
+            if (tr.nds_r[nd] != -1) {
+                self(tr.nds_r[nd]);
+            }
+        }
+    )(rt);
+
+    CHECK(tr.idx == 6);
+    CHECK(nxt == 6);
+
+    const auto [nd_l, nd_r] = split(rt, 4);
+
+    const auto [splt_l, splt_r] = split(nd_l, 1);
+
+    CHECK(tr.szs[splt_l] == 1);
+    CHECK(tr.szs[splt_r] == 3);
+    CHECK(tr.szs[nd_r] == 2);
+
+    rt = merge(merge(splt_l, splt_r), nd_r);
+
+    CHECK(tr.szs[rt] == 6);
 
 }
 
