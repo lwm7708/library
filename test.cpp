@@ -1131,27 +1131,27 @@ TEST_CASE("treap") {
 
     std::int32_t nxt = 0;
     std::int32_t rt = -1;
-    treap tr(6);
+    treap trp(6);
 
     const auto pull = [&](std::int32_t nd) -> void {
-        tr.szs[nd] = 1;
-        if (tr.nds_l[nd] != -1) {
-            tr.szs[nd] += tr.szs[tr.nds_l[nd]];
+        trp.szs[nd] = 1;
+        if (trp.nds_l[nd] != -1) {
+            trp.szs[nd] += trp.szs[trp.nds_l[nd]];
         }
-        if (tr.nds_r[nd] != -1) {
-            tr.szs[nd] += tr.szs[tr.nds_r[nd]];
+        if (trp.nds_r[nd] != -1) {
+            trp.szs[nd] += trp.szs[trp.nds_r[nd]];
         }
     };
     const auto push = [](std::int32_t) -> void {};
 
     const auto merge = [&](std::int32_t nd_l, std::int32_t nd_r) -> std::int32_t {
-        return tr.merge(nd_l, nd_r, pull, push);
+        return trp.merge(nd_l, nd_r, pull, push);
     };
     const auto split = [&](std::int32_t nd, std::int32_t rnk) -> treap::ret_t {
-        return tr.split(
+        return trp.split(
             nd,
             [&](std::int32_t nd) -> bool {
-                const std::int32_t sz = tr.nds_l[nd] != -1 ? tr.szs[tr.nds_l[nd]] : 0;
+                const std::int32_t sz = trp.nds_l[nd] != -1 ? trp.szs[trp.nds_l[nd]] : 0;
                 if (sz < rnk) {
                     rnk -= sz + 1;
                     return true;
@@ -1163,36 +1163,36 @@ TEST_CASE("treap") {
     };
 
     for (std::int32_t i = 0; i < 6; ++i) {
-        rt = merge(rt, tr.insert());
+        rt = merge(rt, trp.insert());
     }
 
     y_combinator(
         [&](auto self, std::int32_t nd) -> void {
-            if (tr.nds_l[nd] != -1) {
-                self(tr.nds_l[nd]);
+            if (trp.nds_l[nd] != -1) {
+                self(trp.nds_l[nd]);
             }
             CHECK(nd == nxt);
             ++nxt;
-            if (tr.nds_r[nd] != -1) {
-                self(tr.nds_r[nd]);
+            if (trp.nds_r[nd] != -1) {
+                self(trp.nds_r[nd]);
             }
         }
     )(rt);
 
-    CHECK(tr.idx == 6);
+    CHECK(trp.idx == 6);
     CHECK(nxt == 6);
 
     const auto [nd_l, nd_r] = split(rt, 4);
 
     const auto [splt_l, splt_r] = split(nd_l, 1);
 
-    CHECK(tr.szs[splt_l] == 1);
-    CHECK(tr.szs[splt_r] == 3);
-    CHECK(tr.szs[nd_r] == 2);
+    CHECK(trp.szs[splt_l] == 1);
+    CHECK(trp.szs[splt_r] == 3);
+    CHECK(trp.szs[nd_r] == 2);
 
     rt = merge(merge(splt_l, splt_r), nd_r);
 
-    CHECK(tr.szs[rt] == 6);
+    CHECK(trp.szs[rt] == 6);
 
 }
 
