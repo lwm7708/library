@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <deque>
+#include <functional>
 #include <map>
 #include <numeric>
 #include <optional>
@@ -18,6 +19,7 @@
 #include "data_structure/bitset.cpp"
 #include "data_structure/disjoint_set_union.cpp"
 #include "data_structure/fenwick_tree.cpp"
+#include "data_structure/line_container.cpp"
 #include "data_structure/range_table.cpp"
 #include "data_structure/segment_tree.cpp"
 #include "data_structure/treap.cpp"
@@ -548,6 +550,45 @@ TEST_CASE("kasai") {
     const std::string str("dcafac ");
 
     CHECK(kasai(std::begin(str), vec_t({6, 4, 2, 5, 1, 0, 3})) == vec_t({0, 1, 0, 1, 0, 0}));
+
+}
+
+TEST_CASE("line_container") {
+
+    line_container cont_1;
+    line_container<std::greater<>> cont_2;
+
+    cont_1.insert(2, 3);
+    cont_2.insert(2, 3);
+
+    CHECK(cont_1.query(3) == 9);
+    CHECK(cont_2.query(3) == 9);
+
+    cont_1.insert(-4, 10);
+    cont_2.insert(-4, 10);
+
+    CHECK(cont_1.query(-3) == -3);
+    CHECK(cont_2.query(-3) == 22);
+
+    cont_1.insert(0, 22);
+    cont_2.insert(0, 22);
+
+    CHECK(cont_1.query(0) == 3);
+    CHECK(cont_2.query(0) == 22);
+
+    cont_1.insert(0, 26);
+    cont_2.insert(0, 26);
+
+    CHECK(cont_1.query(0) == 3);
+    CHECK(cont_2.query(0) == 26);
+
+    cont_1.insert(-1, 4);
+    cont_2.insert(-1, 4);
+
+    CHECK(cont_1.query(-9) == -15);
+    CHECK(cont_1.query(20) == -70);
+    CHECK(cont_2.query(-9) == 46);
+    CHECK(cont_2.query(20) == 43);
 
 }
 
