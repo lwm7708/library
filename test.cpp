@@ -555,7 +555,7 @@ TEST_CASE("kasai") {
 
 TEST_CASE("line_container") {
 
-    line_container cont_1;
+    line_container<std::less<>> cont_1;
     line_container<std::greater<>> cont_2;
 
     cont_1.insert(2, 3);

@@ -6,7 +6,7 @@
 #include <limits>
 #include <set>
 
-template <typename Compare = std::less<>>
+template <typename Compare>
 class line_container {
 
 private:
