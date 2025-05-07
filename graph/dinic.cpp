@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <limits>
 #include <queue>
 #include <utility>
 #include <vector>
@@ -16,15 +15,14 @@ private:
 
     using edge_t = std::pair<std::int32_t, T>;
 
-    static constexpr T INF = std::numeric_limits<T>::max();
-
     std::int32_t sz;
     std::vector<edge_t> edges;
     std::vector<std::vector<std::int32_t>> adj;
+    T inf;
 
 public:
 
-    explicit dinic(std::int32_t sz) : sz(sz), adj(sz) {}
+    explicit dinic(std::int32_t sz) : sz(sz), adj(sz), inf(1) {}
 
     void add_edge(std::int32_t node_fm, std::int32_t node_to, T cap) {
 
@@ -33,6 +31,8 @@ public:
 
         adj[node_fm].push_back(std::size(edges) - 2);
         adj[node_to].push_back(std::size(edges) - 1);
+
+        inf += cap;
 
     }
 
@@ -86,7 +86,7 @@ public:
                     }
                     return flow;
                 }
-            )(src, INF);
+            )(src, inf);
         }
 
         return tot_flow;
