@@ -21,11 +21,10 @@ private:
     std::int32_t sz;
     std::vector<edge_t> edges;
     std::vector<std::vector<std::int32_t>> adj;
-    std::vector<std::int32_t> lvls;
 
 public:
 
-    explicit dinic(std::int32_t sz) : sz(sz), adj(sz), lvls(sz) {}
+    explicit dinic(std::int32_t sz) : sz(sz), adj(sz) {}
 
     void add_edge(std::int32_t node_fm, std::int32_t node_to, T cap) {
 
@@ -45,6 +44,7 @@ public:
 
     T push(std::int32_t src, std::int32_t dst) {
 
+        std::vector<std::int32_t> lvls(sz);
         T tot_flow = 0;
 
         while (true) {
