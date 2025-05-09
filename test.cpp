@@ -27,6 +27,7 @@
 #include "graph/dinic.cpp"
 #include "graph/heavy_light_decomposition.cpp"
 #include "graph/long_path_decomposition.cpp"
+#include "graph/minimum_cost_flow.cpp"
 #include "hashing/integral_hash.cpp"
 #include "math/algebra/diophantine.cpp"
 #include "math/algebra/fast_fourier_transform.cpp"
@@ -736,6 +737,42 @@ TEST_CASE("miller_rabin") {
     CHECK(!miller_rabin(1437155053));
     CHECK(!miller_rabin(57882617207));
     CHECK(miller_rabin(180252380737439));
+
+}
+
+TEST_CASE("minimum_cost_flow") {
+
+    minimum_cost_flow<std::int32_t> ntwk(5);
+
+    ntwk.add_edge(0, 1, 3, 1);
+    ntwk.add_edge(1, 4, 4, 1);
+    ntwk.add_edge(2, 0, 3, 9);
+    ntwk.add_edge(2, 3, 2, -2);
+    ntwk.add_edge(3, 1, 8, 0);
+
+    CHECK(ntwk.push(2, 4, 1) == std::array<std::int32_t, 2>({1, -1}));
+
+    CHECK(ntwk.get_flow(0) == 0);
+    CHECK(ntwk.get_flow(1) == 1);
+    CHECK(ntwk.get_flow(2) == 0);
+    CHECK(ntwk.get_flow(3) == 1);
+    CHECK(ntwk.get_flow(4) == 1);
+
+    ntwk = minimum_cost_flow<std::int32_t>(5);
+
+    ntwk.add_edge(0, 1, 3, 1);
+    ntwk.add_edge(1, 4, 4, 1);
+    ntwk.add_edge(2, 0, 3, 9);
+    ntwk.add_edge(2, 3, 2, -2);
+    ntwk.add_edge(3, 1, 8, 0);
+
+    CHECK(ntwk.push(2, 4, 5) == std::array<std::int32_t, 2>({4, 20}));
+
+    CHECK(ntwk.get_flow(0) == 2);
+    CHECK(ntwk.get_flow(1) == 4);
+    CHECK(ntwk.get_flow(2) == 2);
+    CHECK(ntwk.get_flow(3) == 2);
+    CHECK(ntwk.get_flow(4) == 2);
 
 }
 
