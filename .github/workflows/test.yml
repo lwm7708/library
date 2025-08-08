@@ -1,0 +1,29 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - .gitignore
+      - README.md
+      - debug.cpp
+      - generate.cpp
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Clang
+        uses: egor-tensin/setup-clang@v1
+      - name: Download doctest
+        run: |
+          mkdir include
+          wget -O include/doctest.h \
+            https://github.com/doctest/doctest/releases/download/v2.4.11/doctest.h
+      - name: Run tests
+        run: ./test.sh
