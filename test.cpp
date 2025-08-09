@@ -18,6 +18,7 @@
 #include ".tests/math/algebra/diophantine.cpp"
 #include ".tests/math/algebra/fast_fourier_transform.cpp"
 #include ".tests/math/algebra/matrix.cpp"
+#include ".tests/math/algebra/polynomial.cpp"
 #include ".tests/math/algebra/two_sat.cpp"
 #include ".tests/math/combinatorics/combinatorics.cpp"
 #include ".tests/math/combinatorics/exponentiate.cpp"
