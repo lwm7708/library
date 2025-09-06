@@ -33,6 +33,7 @@
 #include ".tests/math/number_theory/pollard_rho.cpp"
 #include ".tests/math/number_theory/primitive_root.cpp"
 #include ".tests/math/number_theory/sieve.cpp"
+#include ".tests/sequence/aho_corasick_automaton.cpp"
 #include ".tests/sequence/kasai.cpp"
 #include ".tests/sequence/manacher.cpp"
 #include ".tests/sequence/prefix_function.cpp"
